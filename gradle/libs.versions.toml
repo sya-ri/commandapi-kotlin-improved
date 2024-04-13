@@ -1,6 +1,7 @@
 [versions]
 kotlin = "1.9.23"
 kotlinter = "4.3.0"
+dokka = "1.9.20"
 shadow = "8.1.1"
 git-version = "3.0.0"
 plugin-yml = "0.6.0"
@@ -11,6 +12,7 @@ paper = "1.19.4-R0.1-SNAPSHOT"
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 git-version = { id = "com.palantir.git-version", version.ref = "git-version" }
 plugin-yml-bukkit = { id = "net.minecrell.plugin-yml.bukkit", version.ref = "plugin-yml" }
