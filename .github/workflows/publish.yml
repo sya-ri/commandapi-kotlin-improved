@@ -22,4 +22,5 @@ jobs:
           cache: gradle
       - name: Publish
         run: |
+          chmod +x ./gradlew
           ./gradlew publish --no-daemon --stacktrace
