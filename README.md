@@ -1,6 +1,9 @@
 # commandapi-kotlin-improved
 
 [![Compatible with CommandAPI v9.3.0](https://img.shields.io/badge/Compatible%20with-CommandAPI%20v9.3.0-brightgreen)](https://commandapi.jorel.dev/9.3.0/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/sya-ri/commandapi-kotlin-improved)](https://github.com/sya-ri/commandapi-kotlin-improved/releases/latest)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.s7a/commandapi-bukkit-kotlin-improved)](https://search.maven.org/artifact/dev.s7a/commandapi-bukkit-kotlin-improved)
+[![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 
 Improve [CommandAPI](https://github.com/JorelAli/CommandAPI) Kotlin DSL.
 
@@ -29,6 +32,10 @@ A great library for creating Minecraft commands. It's a library written in Java 
 - Replace `dev.jorel:commandapi-bukkit-kotlin` with this library.
 
 ```kotlin
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation("dev.s7a:commandapi-bukkit-kotlin-improved:1.0.0")
 }
