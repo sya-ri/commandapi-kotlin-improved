@@ -53,7 +53,7 @@ fun registerCommand() {
         literalArgument("integer") {
             integerArgument("value") { getValue ->
                 anyExecutor { sender, args ->
-                    val value = getValue(args)
+                    val value = getValue(args) // Returns Int
                     sender.sendMessage("You entered: $value")
                 }
             }
