@@ -7,7 +7,7 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
 
-    version = "1.0.0-SNAPSHOT"
+    version = "1.0.0"
 
     val sourceJar by tasks.registering(Jar::class) {
         archiveClassifier.set("sources")
