@@ -1,18 +1,28 @@
+import groovy.lang.Closure
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlinter)
-    alias(libs.plugins.shadow)
+    alias(libs.plugins.git.version)
 }
+
+val gitVersion: Closure<String> by extra
 
 group = "dev.s7a"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-    maven(url = "https://papermc.io/repo/repository/maven-public/")
+allprojects {
+    repositories {
+        mavenCentral()
+        maven(url = "https://papermc.io/repo/repository/maven-public/")
+    }
 }
 
-dependencies {
-    compileOnly(libs.commandapi.bukkit.core)
-    compileOnly(libs.paper.api)
+subprojects {
+    apply(plugin = "kotlin")
+
+    afterEvaluate {
+        apply(plugin = libs.plugins.kotlinter.get().pluginId)
+        apply(plugin = libs.plugins.git.version.get().pluginId)
+    }
 }
