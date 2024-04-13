@@ -2,6 +2,8 @@
 
 [![Compatible with CommandAPI v9.3.0](https://img.shields.io/badge/Compatible%20with-CommandAPI%20v9.3.0-brightgreen)](https://commandapi.jorel.dev/9.3.0/)
 
+Improve CommandAPI Kotlin DSL.
+
 - A better alternative library to [official Kotlin DSL](https://commandapi.jorel.dev/9.3.0/kotlindsl.html)
   - shorter, more type-safe code
 - Code compatibility. Change the import, and it will work (but doesn't support CommandAPICommand)

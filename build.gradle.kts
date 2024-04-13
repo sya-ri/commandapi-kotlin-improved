@@ -9,7 +9,7 @@ plugins {
 val gitVersion: Closure<String> by extra
 
 group = "dev.s7a"
-version = "1.0-SNAPSHOT"
+version = gitVersion()
 
 allprojects {
     repositories {

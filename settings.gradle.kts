@@ -1,7 +1,7 @@
 rootProject.name = "commandapi-kotlin-improved"
 
 include(
-    ":bukkit",
+    ":api:bukkit",
     ":examples:original",
     ":examples:improved",
 )

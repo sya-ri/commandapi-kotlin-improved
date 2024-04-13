@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import dev.s7a.gradle.minecraft.server.tasks.LaunchMinecraftServerTask
 import dev.s7a.gradle.minecraft.server.tasks.LaunchMinecraftServerTask.JarUrl
-import groovy.lang.Closure
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
@@ -16,15 +15,13 @@ subprojects {
         apply(plugin = libs.plugins.plugin.yml.bukkit.get().pluginId)
         apply(plugin = libs.plugins.minecraft.server.get().pluginId)
 
-        val gitVersion: Closure<String> by extra
-
         dependencies {
             compileOnly(libs.paper.api)
         }
 
         configure<BukkitPluginDescription> {
             main = "dev.s7a.commandapi.example.ExamplePlugin"
-            version = gitVersion()
+            version = rootProject.version.toString()
             apiVersion = "1.16"
             author = "sya_ri"
         }
