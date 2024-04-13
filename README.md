@@ -24,7 +24,7 @@ Improve [CommandAPI](https://github.com/JorelAli/CommandAPI) Kotlin DSL.
 
 A great library for creating Minecraft commands. It's a library written in Java and also features a Kotlin DSL. But it's not type safe.
 
-## Implementation
+## Installation
 
 - Replace `dev.jorel:commandapi-bukkit-kotlin` with this library.
 
