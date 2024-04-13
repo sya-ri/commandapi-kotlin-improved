@@ -2,13 +2,25 @@
 
 [![Compatible with CommandAPI v9.3.0](https://img.shields.io/badge/Compatible%20with-CommandAPI%20v9.3.0-brightgreen)](https://commandapi.jorel.dev/9.3.0/)
 
-Improve CommandAPI Kotlin DSL.
+Improve [CommandAPI](https://github.com/JorelAli/CommandAPI) Kotlin DSL.
 
 - A better alternative library to [official Kotlin DSL](https://commandapi.jorel.dev/9.3.0/kotlindsl.html)
   - shorter, more type-safe code
 - Code compatibility. Change the import, and it will work (but doesn't support CommandAPICommand)
   - You can also cast by specifying the node name in the same way as the official one.
   - Recommend to obtain it via a getter.
+
+## What's CommandAPI?
+
+<div align="center">
+
+> <img src="https://github.com/JorelAli/CommandAPI/raw/master/images/cmdapi.svg" alt="CommandAPI logo" width="600">
+>
+> A Bukkit/Spigot API to use the command UI introduced in Minecraft 1.13
+
+</div>
+
+A great library for creating Minecraft commands. It's a library written in Java and also features a Kotlin DSL. But it's not type safe.
 
 ## Implementation
 
