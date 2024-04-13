@@ -12,6 +12,7 @@ Improve [CommandAPI](https://github.com/JorelAli/CommandAPI) Kotlin DSL.
 
 ## What's CommandAPI?
 
+<a href="https://github.com/JorelAli/CommandAPI">
 <div align="center">
 
 > <img src="https://github.com/JorelAli/CommandAPI/raw/master/images/cmdapi.svg" alt="CommandAPI logo" width="600">
@@ -19,6 +20,7 @@ Improve [CommandAPI](https://github.com/JorelAli/CommandAPI) Kotlin DSL.
 > A Bukkit/Spigot API to use the command UI introduced in Minecraft 1.13
 
 </div>
+</a>
 
 A great library for creating Minecraft commands. It's a library written in Java and also features a Kotlin DSL. But it's not type safe.
 
