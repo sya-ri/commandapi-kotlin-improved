@@ -3,12 +3,27 @@ package dev.jorel.commandapi.kotlindsl
 import dev.jorel.commandapi.*
 import dev.jorel.commandapi.arguments.*
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Predicate
 
 inline fun commandTree(
     name: String,
     tree: CommandTree.() -> Unit = {},
 ) = CommandTree(name).apply(tree).register()
+
+inline fun commandTree(
+    name: String,
+    namespace: String,
+    tree: CommandTree.() -> Unit = {
+    },
+) = CommandTree(name).apply(tree).register(namespace)
+
+inline fun commandTree(
+    name: String,
+    namespace: JavaPlugin,
+    tree: CommandTree.() -> Unit = {
+    },
+) = CommandTree(name).apply(tree).register(namespace)
 
 @Deprecated(
     "This method has been deprecated since version 9.1.0 as it is not needed anymore. See the documentation for more information",
@@ -195,10 +210,11 @@ inline fun CommandTree.entitySelectorArgumentOneEntity(
 
 inline fun CommandTree.entitySelectorArgumentManyEntities(
     nodeName: String,
+    allowEmpty: Boolean = true,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {
     },
-): CommandTree = then(EntitySelectorArgument.ManyEntities(nodeName).setOptional(optional).apply(block))
+): CommandTree = then(EntitySelectorArgument.ManyEntities(nodeName, allowEmpty).setOptional(optional).apply(block))
 
 inline fun CommandTree.entitySelectorArgumentOnePlayer(
     nodeName: String,
@@ -209,10 +225,11 @@ inline fun CommandTree.entitySelectorArgumentOnePlayer(
 
 inline fun CommandTree.entitySelectorArgumentManyPlayers(
     nodeName: String,
+    allowEmpty: Boolean = true,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {
     },
-): CommandTree = then(EntitySelectorArgument.ManyPlayers(nodeName).setOptional(optional).apply(block))
+): CommandTree = then(EntitySelectorArgument.ManyPlayers(nodeName, allowEmpty).setOptional(optional).apply(block))
 
 inline fun CommandTree.playerArgument(
     nodeName: String,
@@ -364,10 +381,18 @@ inline fun CommandTree.particleArgument(
 
 inline fun CommandTree.potionEffectArgument(
     nodeName: String,
+    useNamespacedKey: Boolean = false,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {
     },
-): CommandTree = then(PotionEffectArgument(nodeName).setOptional(optional).apply(block))
+): CommandTree =
+    if (useNamespacedKey) {
+        then(
+            PotionEffectArgument.NamespacedKey(nodeName).setOptional(optional).apply(block),
+        )
+    } else {
+        then(PotionEffectArgument(nodeName).setOptional(optional).apply(block))
+    }
 
 inline fun CommandTree.recipeArgument(
     nodeName: String,
@@ -661,10 +686,11 @@ inline fun Argument<*>.entitySelectorArgumentOneEntity(
 
 inline fun Argument<*>.entitySelectorArgumentManyEntities(
     nodeName: String,
+    allowEmpty: Boolean = true,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {
     },
-): Argument<*> = then(EntitySelectorArgument.ManyEntities(nodeName).setOptional(optional).apply(block))
+): Argument<*> = then(EntitySelectorArgument.ManyEntities(nodeName, allowEmpty).setOptional(optional).apply(block))
 
 inline fun Argument<*>.entitySelectorArgumentOnePlayer(
     nodeName: String,
@@ -675,10 +701,11 @@ inline fun Argument<*>.entitySelectorArgumentOnePlayer(
 
 inline fun Argument<*>.entitySelectorArgumentManyPlayers(
     nodeName: String,
+    allowEmpty: Boolean = true,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {
     },
-): Argument<*> = then(EntitySelectorArgument.ManyPlayers(nodeName).setOptional(optional).apply(block))
+): Argument<*> = then(EntitySelectorArgument.ManyPlayers(nodeName, allowEmpty).setOptional(optional).apply(block))
 
 inline fun Argument<*>.playerArgument(
     nodeName: String,
@@ -830,10 +857,18 @@ inline fun Argument<*>.particleArgument(
 
 inline fun Argument<*>.potionEffectArgument(
     nodeName: String,
+    useNamespacedKey: Boolean = false,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {
     },
-): Argument<*> = then(PotionEffectArgument(nodeName).setOptional(optional).apply(block))
+): Argument<*> =
+    if (useNamespacedKey) {
+        then(
+            PotionEffectArgument.NamespacedKey(nodeName).setOptional(optional).apply(block),
+        )
+    } else {
+        then(PotionEffectArgument(nodeName).setOptional(optional).apply(block))
+    }
 
 inline fun Argument<*>.recipeArgument(
     nodeName: String,

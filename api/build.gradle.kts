@@ -10,7 +10,7 @@ subprojects {
         apply(plugin = "signing")
         apply(plugin = libs.plugins.dokka.get().pluginId)
 
-        version = "1.0.0"
+        version = "1.1.0"
 
         val sourceJar by tasks.registering(Jar::class) {
             archiveClassifier.set("sources")

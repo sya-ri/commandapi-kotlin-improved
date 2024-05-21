@@ -87,6 +87,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 import org.bukkit.loot.LootTable
+import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Team
@@ -98,6 +99,20 @@ inline fun commandTree(
     name: String,
     tree: CommandTree.() -> Unit = {},
 ) = CommandTree(name).apply(tree).register()
+
+inline fun commandTree(
+    name: String,
+    namespace: String,
+    tree: CommandTree.() -> Unit = {
+    },
+) = CommandTree(name).apply(tree).register(namespace)
+
+inline fun commandTree(
+    name: String,
+    namespace: JavaPlugin,
+    tree: CommandTree.() -> Unit = {
+    },
+) = CommandTree(name).apply(tree).register(namespace)
 
 inline fun <reified T, reified U : T> CommandTree.argument(
     base: Argument<T>,
@@ -352,13 +367,15 @@ inline fun CommandTree.entitySelectorOptionalArgumentOneEntity(
 
 inline fun CommandTree.entitySelectorArgumentManyEntities(
     nodeName: String,
+    allowEmpty: Boolean = true,
     crossinline block: Argument<*>.((CommandArguments) -> Collection<Entity>) -> Unit = {},
-) = argument(EntitySelectorArgument.ManyEntities(nodeName), block)
+) = argument(EntitySelectorArgument.ManyEntities(nodeName, allowEmpty), block)
 
 inline fun CommandTree.entitySelectorOptionalArgumentManyEntities(
     nodeName: String,
+    allowEmpty: Boolean = true,
     crossinline block: Argument<*>.((CommandArguments) -> Collection<Entity>?) -> Unit = {},
-) = optionalArgument(EntitySelectorArgument.ManyEntities(nodeName), block)
+) = optionalArgument(EntitySelectorArgument.ManyEntities(nodeName, allowEmpty), block)
 
 inline fun CommandTree.entitySelectorArgumentOnePlayer(
     nodeName: String,
@@ -372,13 +389,15 @@ inline fun CommandTree.entitySelectorOptionalArgumentOnePlayer(
 
 inline fun CommandTree.entitySelectorArgumentManyPlayers(
     nodeName: String,
+    allowEmpty: Boolean = true,
     crossinline block: Argument<*>.((CommandArguments) -> Collection<Player>) -> Unit = {},
-) = argument(EntitySelectorArgument.ManyPlayers(nodeName), block)
+) = argument(EntitySelectorArgument.ManyPlayers(nodeName, allowEmpty), block)
 
 inline fun CommandTree.entitySelectorOptionalArgumentManyPlayers(
     nodeName: String,
+    allowEmpty: Boolean = true,
     crossinline block: Argument<*>.((CommandArguments) -> Collection<Player>?) -> Unit = {},
-) = optionalArgument(EntitySelectorArgument.ManyPlayers(nodeName), block)
+) = optionalArgument(EntitySelectorArgument.ManyPlayers(nodeName, allowEmpty), block)
 
 inline fun CommandTree.playerArgument(
     nodeName: String,
@@ -599,6 +618,16 @@ inline fun CommandTree.potionEffectOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> PotionEffectType?) -> Unit = {},
 ) = optionalArgument(PotionEffectArgument(nodeName), block)
+
+inline fun CommandTree.potionEffectNamespacedKeyArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> NamespacedKey) -> Unit = {},
+) = argument(PotionEffectArgument.NamespacedKey(nodeName), block)
+
+inline fun CommandTree.potionEffectNamespacedKeyOptionalArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> NamespacedKey?) -> Unit = {},
+) = optionalArgument(PotionEffectArgument.NamespacedKey(nodeName), block)
 
 inline fun CommandTree.recipeArgument(
     nodeName: String,
@@ -977,13 +1006,15 @@ inline fun Argument<*>.entitySelectorOptionalArgumentOneEntity(
 
 inline fun Argument<*>.entitySelectorArgumentManyEntities(
     nodeName: String,
+    allowEmpty: Boolean = true,
     crossinline block: Argument<*>.((CommandArguments) -> Collection<Entity>) -> Unit = {},
-) = argument(EntitySelectorArgument.ManyEntities(nodeName), block)
+) = argument(EntitySelectorArgument.ManyEntities(nodeName, allowEmpty), block)
 
 inline fun Argument<*>.entitySelectorOptionalArgumentManyEntities(
     nodeName: String,
+    allowEmpty: Boolean = true,
     crossinline block: Argument<*>.((CommandArguments) -> Collection<Entity>?) -> Unit = {},
-) = optionalArgument(EntitySelectorArgument.ManyEntities(nodeName), block)
+) = optionalArgument(EntitySelectorArgument.ManyEntities(nodeName, allowEmpty), block)
 
 inline fun Argument<*>.entitySelectorArgumentOnePlayer(
     nodeName: String,
@@ -1224,6 +1255,16 @@ inline fun Argument<*>.potionEffectOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> PotionEffectType?) -> Unit = {},
 ) = optionalArgument(PotionEffectArgument(nodeName), block)
+
+inline fun Argument<*>.potionEffectNamespacedKeyArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> NamespacedKey) -> Unit = {},
+) = argument(PotionEffectArgument.NamespacedKey(nodeName), block)
+
+inline fun Argument<*>.potionEffectNamespacedKeyOptionalArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> NamespacedKey?) -> Unit = {},
+) = optionalArgument(PotionEffectArgument.NamespacedKey(nodeName), block)
 
 inline fun Argument<*>.recipeArgument(
     nodeName: String,
