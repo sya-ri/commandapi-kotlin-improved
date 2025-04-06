@@ -38,7 +38,7 @@ repositories {
 
 dependencies {
     implementation("dev.jorel:commandapi-bukkit-core:10.0.0")
-    implementation("dev.s7a:commandapi-bukkit-kotlin-improved:1.1.0")
+    implementation("dev.s7a:commandapi-bukkit-kotlin-improved:1.2.0")
 }
 ```
 

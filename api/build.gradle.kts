@@ -8,9 +8,14 @@ subprojects {
     afterEvaluate {
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
-        apply(plugin = libs.plugins.dokka.get().pluginId)
+        apply(
+            plugin =
+                libs.plugins.dokka
+                    .get()
+                    .pluginId,
+        )
 
-        version = "1.1.0"
+        version = "1.2.0"
 
         val sourceJar by tasks.registering(Jar::class) {
             archiveClassifier.set("sources")
