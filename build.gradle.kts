@@ -14,7 +14,7 @@ version = gitVersion()
 allprojects {
     repositories {
         mavenCentral()
-        maven(url = "https://papermc.io/repo/repository/maven-public/")
+        maven(url = "https://repo.papermc.io/repository/maven-public/")
     }
 }
 
@@ -22,7 +22,17 @@ subprojects {
     apply(plugin = "kotlin")
 
     afterEvaluate {
-        apply(plugin = libs.plugins.kotlinter.get().pluginId)
-        apply(plugin = libs.plugins.git.version.get().pluginId)
+        apply(
+            plugin =
+                libs.plugins.kotlinter
+                    .get()
+                    .pluginId,
+        )
+        apply(
+            plugin =
+                libs.plugins.git.version
+                    .get()
+                    .pluginId,
+        )
     }
 }

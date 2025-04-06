@@ -1,13 +1,13 @@
 # commandapi-kotlin-improved
 
-[![Compatible with CommandAPI v9.4.1](https://img.shields.io/badge/Compatible%20with-CommandAPI%20v9.4.1-brightgreen)](https://commandapi.jorel.dev/9.4.1/)
+[![Compatible with CommandAPI v10.0.0](https://img.shields.io/badge/Compatible%20with-CommandAPI%20v10.0.0-brightgreen)](https://docs.commandapi.dev/)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sya-ri/commandapi-kotlin-improved)](https://github.com/sya-ri/commandapi-kotlin-improved/releases/latest)
 [![Maven Central](https://img.shields.io/maven-central/v/dev.s7a/commandapi-bukkit-kotlin-improved)](https://search.maven.org/artifact/dev.s7a/commandapi-bukkit-kotlin-improved)
 [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 
 Improve [CommandAPI](https://github.com/JorelAli/CommandAPI) Kotlin DSL.
 
-- A better alternative library to [official Kotlin DSL](https://commandapi.jorel.dev/9.4.1/kotlindsl.html)
+- A better alternative library to [official Kotlin DSL](https://docs.commandapi.dev/kotlin-dsl/usage)
   - shorter, more type-safe code
 - Code compatibility. Change the import, and it will work (but doesn't support CommandAPICommand)
   - You can also cast by specifying the node name in the same way as the official one.
@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.jorel:commandapi-bukkit-core:9.4.1")
+    implementation("dev.jorel:commandapi-bukkit-core:10.0.0")
     implementation("dev.s7a:commandapi-bukkit-kotlin-improved:1.1.0")
 }
 ```

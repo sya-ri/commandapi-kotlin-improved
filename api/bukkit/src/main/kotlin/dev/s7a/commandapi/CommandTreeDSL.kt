@@ -9,6 +9,7 @@ import dev.jorel.commandapi.arguments.AdventureChatColorArgument
 import dev.jorel.commandapi.arguments.AdventureChatComponentArgument
 import dev.jorel.commandapi.arguments.AngleArgument
 import dev.jorel.commandapi.arguments.Argument
+import dev.jorel.commandapi.arguments.AsyncOfflinePlayerArgument
 import dev.jorel.commandapi.arguments.AxisArgument
 import dev.jorel.commandapi.arguments.BiomeArgument
 import dev.jorel.commandapi.arguments.BlockPredicateArgument
@@ -93,6 +94,7 @@ import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Team
 import java.util.EnumSet
 import java.util.UUID
+import java.util.concurrent.CompletableFuture
 import java.util.function.Predicate
 
 inline fun commandTree(
@@ -418,6 +420,16 @@ inline fun CommandTree.offlinePlayerOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> OfflinePlayer?) -> Unit = {},
 ) = optionalArgument(OfflinePlayerArgument(nodeName), block)
+
+inline fun CommandTree.asyncOfflinePlayerArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<OfflinePlayer>) -> Unit = {},
+) = argument(AsyncOfflinePlayerArgument(nodeName), block)
+
+inline fun CommandTree.asyncOfflinePlayerOptionalArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<OfflinePlayer>?) -> Unit = {},
+) = optionalArgument(AsyncOfflinePlayerArgument(nodeName), block)
 
 inline fun CommandTree.entityTypeArgument(
     nodeName: String,
@@ -1055,6 +1067,16 @@ inline fun Argument<*>.offlinePlayerOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> OfflinePlayer?) -> Unit = {},
 ) = optionalArgument(OfflinePlayerArgument(nodeName), block)
+
+inline fun Argument<*>.asyncOfflinePlayerArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<OfflinePlayer>) -> Unit = {},
+) = argument(AsyncOfflinePlayerArgument(nodeName), block)
+
+inline fun Argument<*>.asyncOfflinePlayerOptionalArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<OfflinePlayer>?) -> Unit = {},
+) = optionalArgument(AsyncOfflinePlayerArgument(nodeName), block)
 
 inline fun Argument<*>.entityTypeArgument(
     nodeName: String,

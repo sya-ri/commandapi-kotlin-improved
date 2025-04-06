@@ -4,7 +4,8 @@ import dev.jorel.commandapi.*
 import dev.jorel.commandapi.arguments.*
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.function.Predicate
+
+const val WILL_NOT_REGISTER = "will-not-reg"
 
 inline fun commandTree(
     name: String,
@@ -25,17 +26,6 @@ inline fun commandTree(
     },
 ) = CommandTree(name).apply(tree).register(namespace)
 
-@Deprecated(
-    "This method has been deprecated since version 9.1.0 as it is not needed anymore. See the documentation for more information",
-    ReplaceWith(""),
-    DeprecationLevel.WARNING,
-)
-inline fun commandTree(
-    name: String,
-    predicate: Predicate<CommandSender>,
-    tree: CommandTree.() -> Unit = {},
-) = CommandTree(name).withRequirement(predicate).apply(tree).register()
-
 // CommandTree start
 inline fun CommandTree.argument(
     base: Argument<*>,
@@ -48,6 +38,23 @@ inline fun CommandTree.optionalArgument(
     block: Argument<*>.() -> Unit = {
     },
 ): CommandTree = then(base.setOptional(true).setOptional(optional).apply(block))
+
+inline fun CommandTree.nestedArguments(
+    vararg arguments: Argument<*>,
+    block: Argument<*>.() -> Unit = {
+    },
+): CommandTree = thenNested(*arguments.also { it.last().apply(block) })
+
+inline fun CommandTree.nested(block: CommandTree.() -> Unit): CommandTree {
+    val arguments = mutableListOf<AbstractArgumentTree<*, Argument<*>?, CommandSender?>?>()
+    object : CommandTree(WILL_NOT_REGISTER) {
+        override fun then(tree: AbstractArgumentTree<*, Argument<*>?, CommandSender?>?): CommandTree? {
+            arguments.add(tree)
+            return this
+        }
+    }.block()
+    return thenNested(arguments)
+}
 
 // Integer arguments
 inline fun CommandTree.integerArgument(
@@ -244,6 +251,13 @@ inline fun CommandTree.offlinePlayerArgument(
     block: Argument<*>.() -> Unit = {
     },
 ): CommandTree = then(OfflinePlayerArgument(nodeName).setOptional(optional).apply(block))
+
+inline fun CommandTree.asyncOfflinePlayerArgument(
+    nodeName: String,
+    optional: Boolean = false,
+    block: Argument<*>.() -> Unit = {
+    },
+): CommandTree = then(AsyncOfflinePlayerArgument(nodeName).setOptional(optional).apply(block))
 
 inline fun CommandTree.entityTypeArgument(
     nodeName: String,
@@ -473,29 +487,6 @@ inline fun CommandTree.literalArgument(
     },
 ): CommandTree = then(LiteralArgument.of(nodeName, literal).setOptional(optional).apply(block))
 
-@Deprecated(
-    "This version has been deprecated since version 9.0.2",
-    ReplaceWith("multiLiteralArgument(nodeName, listOf(literals))", "dev.jorel.commandapi.kotlindsl.*"),
-    DeprecationLevel.WARNING,
-)
-inline fun CommandTree.multiLiteralArgument(
-    vararg literals: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {},
-): CommandTree = then(MultiLiteralArgument(literals).setOptional(optional).apply(block))
-
-@Deprecated(
-    "This method has been deprecated since version 9.1.0",
-    ReplaceWith("multiLiteralArgument(nodeName, literals)", "dev.jorel.commandapi.kotlindsl.*"),
-    DeprecationLevel.WARNING,
-)
-inline fun CommandTree.multiLiteralArgument(
-    nodeName: String,
-    literals: List<String>,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {},
-): CommandTree = then(MultiLiteralArgument(nodeName, literals).setOptional(optional).apply(block))
-
 inline fun CommandTree.multiLiteralArgument(
     nodeName: String,
     vararg literals: String,
@@ -524,6 +515,23 @@ inline fun Argument<*>.optionalArgument(
     block: Argument<*>.() -> Unit = {
     },
 ): Argument<*> = then(base.setOptional(true).setOptional(optional).apply(block))
+
+inline fun Argument<*>.nestedArguments(
+    vararg arguments: Argument<*>,
+    block: Argument<*>.() -> Unit = {
+    },
+): Argument<*> = thenNested(*arguments.also { it.last().apply(block) })
+
+inline fun Argument<*>.nested(block: Argument<*>.() -> Unit): Argument<*> {
+    val arguments = mutableListOf<AbstractArgumentTree<*, Argument<*>?, CommandSender?>?>()
+    object : LiteralArgument(WILL_NOT_REGISTER) {
+        override fun then(tree: AbstractArgumentTree<*, Argument<*>?, CommandSender?>?): Argument<String?>? {
+            arguments.add(tree)
+            return this
+        }
+    }.block()
+    return thenNested(arguments)
+}
 
 // Integer arguments
 inline fun Argument<*>.integerArgument(
@@ -720,6 +728,13 @@ inline fun Argument<*>.offlinePlayerArgument(
     block: Argument<*>.() -> Unit = {
     },
 ): Argument<*> = then(OfflinePlayerArgument(nodeName).setOptional(optional).apply(block))
+
+inline fun Argument<*>.asyncOfflinePlayerArgument(
+    nodeName: String,
+    optional: Boolean = false,
+    block: Argument<*>.() -> Unit = {
+    },
+): Argument<*> = then(AsyncOfflinePlayerArgument(nodeName).setOptional(optional).apply(block))
 
 inline fun Argument<*>.entityTypeArgument(
     nodeName: String,
@@ -949,29 +964,6 @@ inline fun Argument<*>.literalArgument(
     },
 ): Argument<*> = then(LiteralArgument.of(nodeName, literal).setOptional(optional).apply(block))
 
-@Deprecated(
-    "This version has been deprecated since version 9.0.2",
-    ReplaceWith("multiLiteralArgument(nodeName, listOf(literals))", "dev.jorel.commandapi.kotlindsl.*"),
-    DeprecationLevel.WARNING,
-)
-inline fun Argument<*>.multiLiteralArgument(
-    vararg literals: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {},
-): Argument<*> = then(MultiLiteralArgument(literals).setOptional(optional).apply(block))
-
-@Deprecated(
-    "This method has been deprecated since version 9.1.0",
-    ReplaceWith("multiLiteralArgument(nodeName, literals)", "dev.jorel.commandapi.kotlindsl.*"),
-    DeprecationLevel.WARNING,
-)
-inline fun Argument<*>.multiLiteralArgument(
-    nodeName: String,
-    literals: List<String>,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {},
-): Argument<*> = then(MultiLiteralArgument(nodeName, literals).setOptional(optional).apply(block))
-
 inline fun Argument<*>.multiLiteralArgument(
     nodeName: String,
     vararg literals: String,
@@ -986,25 +978,3 @@ inline fun Argument<*>.functionArgument(
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {},
 ): Argument<*> = then(FunctionArgument(nodeName).setOptional(optional).apply(block))
-
-@Deprecated(
-    "This method has been deprecated since version 9.1.0 as it is not needed anymore. See the documentation for more information",
-    ReplaceWith(""),
-    DeprecationLevel.WARNING,
-)
-inline fun CommandTree.requirement(
-    base: Argument<*>,
-    predicate: Predicate<CommandSender>,
-    block: Argument<*>.() -> Unit = {},
-): CommandTree = then(base.withRequirement(predicate).apply(block))
-
-@Deprecated(
-    "This method has been deprecated since version 9.1.0 as it is not needed anymore. See the documentation for more information",
-    ReplaceWith(""),
-    DeprecationLevel.WARNING,
-)
-inline fun Argument<*>.requirement(
-    base: Argument<*>,
-    predicate: Predicate<CommandSender>,
-    block: Argument<*>.() -> Unit = {},
-): Argument<*> = then(base.withRequirement(predicate).apply(block))
