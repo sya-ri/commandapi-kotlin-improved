@@ -66,7 +66,7 @@ subprojects {
         "21_10" to "1.21.10",
         "21_11" to "1.21.11",
     ).forEach { (name, version) ->
-        task<LaunchMinecraftServerTask>("buildAndLaunchServer$name") {
+        tasks.register<LaunchMinecraftServerTask>("buildAndLaunchServer$name") {
             dependsOn("build")
             doFirst {
                 copy {

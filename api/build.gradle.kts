@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.dokka)
+    alias(libs.plugins.dokka.javadoc)
     `maven-publish`
     signing
 }
@@ -8,12 +9,8 @@ subprojects {
     afterEvaluate {
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
-        apply(
-            plugin =
-                libs.plugins.dokka
-                    .get()
-                    .pluginId,
-        )
+        apply(plugin = "org.jetbrains.dokka")
+        apply(plugin = "org.jetbrains.dokka-javadoc")
 
         version = "1.3.0"
 
@@ -23,10 +20,10 @@ subprojects {
         }
 
         val javadocJar by tasks.registering(Jar::class) {
-            dependsOn(tasks.dokkaJavadoc)
+            dependsOn(tasks.dokkaGeneratePublicationJavadoc)
 
             archiveClassifier.set("javadoc")
-            from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+            from(tasks.dokkaGeneratePublicationJavadoc.flatMap { it.outputDirectory })
         }
 
         publishing {
