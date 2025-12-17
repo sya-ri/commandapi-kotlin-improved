@@ -66,7 +66,7 @@ import org.bukkit.World
 import org.bukkit.advancement.Advancement
 import org.bukkit.block.Biome
 import org.bukkit.block.Block
-import org.bukkit.block.data.BlockData
+import org.bukkit.block.BlockState
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
@@ -388,12 +388,12 @@ inline fun CommandTree.objectiveCriteriaOptionalArgument(
 inline fun CommandTree.teamArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Team) -> Unit = {},
-) = argument(ObjectiveArgument(nodeName), block)
+) = argument(TeamArgument(nodeName), block)
 
 inline fun CommandTree.teamOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Team?) -> Unit = {},
-) = optionalArgument(ObjectiveArgument(nodeName), block)
+) = optionalArgument(TeamArgument(nodeName), block)
 
 inline fun CommandTree.angleArgument(
     nodeName: String,
@@ -437,12 +437,12 @@ inline fun CommandTree.biomeNamespacedKeyOptionalArgument(
 
 inline fun CommandTree.blockStateArgument(
     nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> BlockData) -> Unit = {},
+    crossinline block: Argument<*>.((CommandArguments) -> BlockState) -> Unit = {},
 ) = argument(BlockStateArgument(nodeName), block)
 
 inline fun CommandTree.blockStateOptionalArgument(
     nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> BlockData?) -> Unit = {},
+    crossinline block: Argument<*>.((CommandArguments) -> BlockState?) -> Unit = {},
 ) = optionalArgument(BlockStateArgument(nodeName), block)
 
 inline fun CommandTree.commandArgument(
@@ -935,12 +935,12 @@ inline fun Argument<*>.objectiveCriteriaOptionalArgument(
 inline fun Argument<*>.teamArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Team) -> Unit = {},
-) = argument(ObjectiveArgument(nodeName), block)
+) = argument(TeamArgument(nodeName), block)
 
 inline fun Argument<*>.teamOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Team?) -> Unit = {},
-) = optionalArgument(ObjectiveArgument(nodeName), block)
+) = optionalArgument(TeamArgument(nodeName), block)
 
 inline fun Argument<*>.angleArgument(
     nodeName: String,
@@ -984,12 +984,12 @@ inline fun Argument<*>.biomeNamespacedKeyOptionalArgument(
 
 inline fun Argument<*>.blockStateArgument(
     nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> BlockData) -> Unit = {},
+    crossinline block: Argument<*>.((CommandArguments) -> BlockState) -> Unit = {},
 ) = argument(BlockStateArgument(nodeName), block)
 
 inline fun Argument<*>.blockStateOptionalArgument(
     nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> BlockData?) -> Unit = {},
+    crossinline block: Argument<*>.((CommandArguments) -> BlockState?) -> Unit = {},
 ) = optionalArgument(BlockStateArgument(nodeName), block)
 
 inline fun Argument<*>.commandArgument(
