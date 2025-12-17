@@ -6,6 +6,7 @@ shadow = "9.3.0"
 git-version = "4.2.0"
 plugin-yml = "0.8.0"
 minecraft-server = "4.0.1"
+maven-publish = "0.35.0"
 commandapi = "11.1.0"
 paper = "1.20.4-R0.1-SNAPSHOT"
 velocity = "3.4.0-SNAPSHOT"
@@ -19,6 +20,7 @@ shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 git-version = { id = "com.palantir.git-version", version.ref = "git-version" }
 plugin-yml-bukkit = { id = "de.eldoria.plugin-yml.bukkit", version.ref = "plugin-yml" }
 minecraft-server = { id = "dev.s7a.gradle.minecraft.server", version.ref = "minecraft-server" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
 
 [libraries]
 commandapi-bukkit-core = { group = "dev.jorel", name = "commandapi-bukkit-core", version.ref = "commandapi" }
