@@ -1,4 +1,4 @@
 dependencies {
     implementation(libs.commandapi.paper.shade)
-    implementation(project(":api:paper"))
+    implementation(project(":api:bukkit"))
 }
