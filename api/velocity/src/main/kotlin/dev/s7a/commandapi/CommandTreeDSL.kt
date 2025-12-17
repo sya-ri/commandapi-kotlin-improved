@@ -1,3 +1,5 @@
+@file:JvmName("CommandTreeDSLVelocity")
+
 package dev.s7a.commandapi
 
 import dev.jorel.commandapi.CommandTree

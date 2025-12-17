@@ -1,3 +1,4 @@
+@file:JvmName("CommandTreeDSLSpigot")
 @file:Suppress("DEPRECATION")
 
 package dev.s7a.commandapi

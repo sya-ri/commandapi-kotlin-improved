@@ -1,3 +1,5 @@
+@file:JvmName("CommandTreeDSLPaper")
+
 package dev.s7a.commandapi
 
 import com.destroystokyo.paper.profile.PlayerProfile

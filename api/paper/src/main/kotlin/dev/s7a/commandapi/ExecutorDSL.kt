@@ -1,3 +1,5 @@
+@file:JvmName("ExecutorDSLPaper")
+
 package dev.s7a.commandapi
 
 import dev.jorel.commandapi.BukkitExecutable

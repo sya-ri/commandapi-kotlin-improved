@@ -1,3 +1,5 @@
+@file:JvmName("ExecutorDSLVelocity")
+
 package dev.s7a.commandapi
 
 import com.velocitypowered.api.command.CommandSource
