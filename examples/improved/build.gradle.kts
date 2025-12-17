@@ -1,4 +1,4 @@
 dependencies {
-    implementation(libs.commandapi.spigot.shade)
-    implementation(project(":api:spigot"))
+    implementation(libs.commandapi.paper.shade)
+    implementation(project(":api:paper"))
 }

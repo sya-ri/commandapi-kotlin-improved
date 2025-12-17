@@ -1,7 +1,7 @@
 package dev.s7a.commandapi.example
 
 import dev.jorel.commandapi.CommandAPI
-import dev.jorel.commandapi.CommandAPISpigotConfig
+import dev.jorel.commandapi.CommandAPIPaperConfig
 import dev.s7a.commandapi.anyExecutor
 import dev.s7a.commandapi.commandTree
 import dev.s7a.commandapi.integerArgument
@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin
 @Suppress("unused")
 class ExamplePlugin : JavaPlugin() {
     override fun onLoad() {
-        CommandAPI.onLoad(CommandAPISpigotConfig(this).verboseOutput(true))
+        CommandAPI.onLoad(CommandAPIPaperConfig(this).verboseOutput(true))
         registerCommand()
     }
 
