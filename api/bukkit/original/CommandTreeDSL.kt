@@ -81,13 +81,6 @@ inline fun CommandTree.floatArgument(
     block: Argument<*>.() -> Unit = {},
 ): CommandTree = then(FloatArgument(nodeName, min, max).setOptional(optional).apply(block))
 
-inline fun CommandTree.floatRangeArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(FloatRangeArgument(nodeName).setOptional(optional).apply(block))
-
 // Double arguments
 inline fun CommandTree.doubleArgument(
     nodeName: String,
@@ -96,6 +89,13 @@ inline fun CommandTree.doubleArgument(
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {},
 ): CommandTree = then(DoubleArgument(nodeName, min, max).setOptional(optional).apply(block))
+
+inline fun CommandTree.doubleRangeArgument(
+    nodeName: String,
+    optional: Boolean = false,
+    block: Argument<*>.() -> Unit = {
+    },
+): CommandTree = then(DoubleRangeArgument(nodeName).setOptional(optional).apply(block))
 
 // Long arguments
 inline fun CommandTree.longArgument(
@@ -166,48 +166,6 @@ inline fun CommandTree.axisArgument(
     },
 ): CommandTree = then(AxisArgument(nodeName).setOptional(optional).apply(block))
 
-// Chat arguments
-inline fun CommandTree.chatColorArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {},
-): CommandTree = then(ChatColorArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun CommandTree.chatComponentArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(ChatComponentArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun CommandTree.chatArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(ChatArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun CommandTree.adventureChatColorArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(AdventureChatColorArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun CommandTree.adventureChatComponentArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(AdventureChatComponentArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun CommandTree.adventureChatArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(AdventureChatArgument(nodeName).setOptional(optional).apply(block))
-
 // Entity & Player arguments
 inline fun CommandTree.entitySelectorArgumentOneEntity(
     nodeName: String,
@@ -237,27 +195,6 @@ inline fun CommandTree.entitySelectorArgumentManyPlayers(
     block: Argument<*>.() -> Unit = {
     },
 ): CommandTree = then(EntitySelectorArgument.ManyPlayers(nodeName, allowEmpty).setOptional(optional).apply(block))
-
-inline fun CommandTree.playerArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(PlayerArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun CommandTree.offlinePlayerArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(OfflinePlayerArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun CommandTree.asyncOfflinePlayerArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(AsyncOfflinePlayerArgument(nodeName).setOptional(optional).apply(block))
 
 inline fun CommandTree.entityTypeArgument(
     nodeName: String,
@@ -408,13 +345,6 @@ inline fun CommandTree.potionEffectArgument(
         then(PotionEffectArgument(nodeName).setOptional(optional).apply(block))
     }
 
-inline fun CommandTree.recipeArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): CommandTree = then(RecipeArgument(nodeName).setOptional(optional).apply(block))
-
 inline fun CommandTree.soundArgument(
     nodeName: String,
     useNamespacedKey: Boolean = false,
@@ -558,13 +488,6 @@ inline fun Argument<*>.floatArgument(
     block: Argument<*>.() -> Unit = {},
 ): Argument<*> = then(FloatArgument(nodeName, min, max).setOptional(optional).apply(block))
 
-inline fun Argument<*>.floatRangeArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(FloatRangeArgument(nodeName).setOptional(optional).apply(block))
-
 // Double arguments
 inline fun Argument<*>.doubleArgument(
     nodeName: String,
@@ -573,6 +496,13 @@ inline fun Argument<*>.doubleArgument(
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {},
 ): Argument<*> = then(DoubleArgument(nodeName, min, max).setOptional(optional).apply(block))
+
+inline fun Argument<*>.doubleRangeArgument(
+    nodeName: String,
+    optional: Boolean = false,
+    block: Argument<*>.() -> Unit = {
+    },
+): Argument<*> = then(DoubleRangeArgument(nodeName).setOptional(optional).apply(block))
 
 // Long arguments
 inline fun Argument<*>.longArgument(
@@ -643,48 +573,6 @@ inline fun Argument<*>.axisArgument(
     },
 ): Argument<*> = then(AxisArgument(nodeName).setOptional(optional).apply(block))
 
-// Chat arguments
-inline fun Argument<*>.chatColorArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {},
-): Argument<*> = then(ChatColorArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun Argument<*>.chatComponentArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(ChatComponentArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun Argument<*>.chatArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(ChatArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun Argument<*>.adventureChatColorArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(AdventureChatColorArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun Argument<*>.adventureChatComponentArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(AdventureChatComponentArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun Argument<*>.adventureChatArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(AdventureChatArgument(nodeName).setOptional(optional).apply(block))
-
 // Entity & Player arguments
 inline fun Argument<*>.entitySelectorArgumentOneEntity(
     nodeName: String,
@@ -714,27 +602,6 @@ inline fun Argument<*>.entitySelectorArgumentManyPlayers(
     block: Argument<*>.() -> Unit = {
     },
 ): Argument<*> = then(EntitySelectorArgument.ManyPlayers(nodeName, allowEmpty).setOptional(optional).apply(block))
-
-inline fun Argument<*>.playerArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(PlayerArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun Argument<*>.offlinePlayerArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(OfflinePlayerArgument(nodeName).setOptional(optional).apply(block))
-
-inline fun Argument<*>.asyncOfflinePlayerArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(AsyncOfflinePlayerArgument(nodeName).setOptional(optional).apply(block))
 
 inline fun Argument<*>.entityTypeArgument(
     nodeName: String,
@@ -884,13 +751,6 @@ inline fun Argument<*>.potionEffectArgument(
     } else {
         then(PotionEffectArgument(nodeName).setOptional(optional).apply(block))
     }
-
-inline fun Argument<*>.recipeArgument(
-    nodeName: String,
-    optional: Boolean = false,
-    block: Argument<*>.() -> Unit = {
-    },
-): Argument<*> = then(RecipeArgument(nodeName).setOptional(optional).apply(block))
 
 inline fun Argument<*>.soundArgument(
     nodeName: String,

@@ -6,8 +6,9 @@ shadow = "8.1.1"
 git-version = "3.0.0"
 plugin-yml = "0.6.0"
 minecraft-server = "3.2.1"
-commandapi = "10.0.0"
+commandapi = "11.1.0"
 paper = "1.20.4-R0.1-SNAPSHOT"
+velocity = "3.4.0-SNAPSHOT"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -20,6 +21,10 @@ minecraft-server = { id = "dev.s7a.gradle.minecraft.server", version.ref = "mine
 
 [libraries]
 commandapi-bukkit-core = { group = "dev.jorel", name = "commandapi-bukkit-core", version.ref = "commandapi" }
-commandapi-bukkit-shade = { group = "dev.jorel", name = "commandapi-bukkit-shade", version.ref = "commandapi" }
-commandapi-bukkit-kotlin = { group = "dev.jorel", name = "commandapi-bukkit-kotlin", version.ref = "commandapi" }
+commandapi-spigot-core = { group = "dev.jorel", name = "commandapi-spigot-core", version.ref = "commandapi" }
+commandapi-paper-core = { group = "dev.jorel", name = "commandapi-paper-core", version.ref = "commandapi" }
+commandapi-velocity-core = { group = "dev.jorel", name = "commandapi-velocity-core", version.ref = "commandapi" }
+commandapi-spigot-shade = { group = "dev.jorel", name = "commandapi-spigot-shade", version.ref = "commandapi" }
+commandapi-paper-kotlin = { group = "dev.jorel", name = "commandapi-kotlin-paper", version.ref = "commandapi" }
 paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
+velocity-api = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }

@@ -1,4 +1,4 @@
 dependencies {
-    implementation(libs.commandapi.bukkit.shade)
-    implementation(libs.commandapi.bukkit.kotlin)
+    implementation(libs.commandapi.spigot.shade)
+    implementation(libs.commandapi.paper.kotlin)
 }

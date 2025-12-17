@@ -4,27 +4,20 @@ package dev.s7a.commandapi
 
 import dev.jorel.commandapi.CommandTree
 import dev.jorel.commandapi.arguments.AdvancementArgument
-import dev.jorel.commandapi.arguments.AdventureChatArgument
-import dev.jorel.commandapi.arguments.AdventureChatColorArgument
-import dev.jorel.commandapi.arguments.AdventureChatComponentArgument
 import dev.jorel.commandapi.arguments.AngleArgument
 import dev.jorel.commandapi.arguments.Argument
-import dev.jorel.commandapi.arguments.AsyncOfflinePlayerArgument
 import dev.jorel.commandapi.arguments.AxisArgument
 import dev.jorel.commandapi.arguments.BiomeArgument
 import dev.jorel.commandapi.arguments.BlockPredicateArgument
 import dev.jorel.commandapi.arguments.BlockStateArgument
 import dev.jorel.commandapi.arguments.BooleanArgument
-import dev.jorel.commandapi.arguments.ChatArgument
-import dev.jorel.commandapi.arguments.ChatColorArgument
-import dev.jorel.commandapi.arguments.ChatComponentArgument
 import dev.jorel.commandapi.arguments.CommandArgument
 import dev.jorel.commandapi.arguments.DoubleArgument
+import dev.jorel.commandapi.arguments.DoubleRangeArgument
 import dev.jorel.commandapi.arguments.EnchantmentArgument
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.arguments.EntityTypeArgument
 import dev.jorel.commandapi.arguments.FloatArgument
-import dev.jorel.commandapi.arguments.FloatRangeArgument
 import dev.jorel.commandapi.arguments.FunctionArgument
 import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.arguments.IntegerArgument
@@ -43,11 +36,8 @@ import dev.jorel.commandapi.arguments.NBTCompoundArgument
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument
 import dev.jorel.commandapi.arguments.ObjectiveArgument
 import dev.jorel.commandapi.arguments.ObjectiveCriteriaArgument
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.arguments.ParticleArgument
-import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.arguments.PotionEffectArgument
-import dev.jorel.commandapi.arguments.RecipeArgument
 import dev.jorel.commandapi.arguments.RotationArgument
 import dev.jorel.commandapi.arguments.ScoreHolderArgument
 import dev.jorel.commandapi.arguments.ScoreboardSlotArgument
@@ -59,7 +49,7 @@ import dev.jorel.commandapi.arguments.UUIDArgument
 import dev.jorel.commandapi.arguments.WorldArgument
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.wrappers.CommandResult
-import dev.jorel.commandapi.wrappers.FloatRange
+import dev.jorel.commandapi.wrappers.DoubleRange
 import dev.jorel.commandapi.wrappers.FunctionWrapper
 import dev.jorel.commandapi.wrappers.IntegerRange
 import dev.jorel.commandapi.wrappers.Location2D
@@ -67,14 +57,9 @@ import dev.jorel.commandapi.wrappers.MathOperation
 import dev.jorel.commandapi.wrappers.ParticleData
 import dev.jorel.commandapi.wrappers.Rotation
 import dev.jorel.commandapi.wrappers.ScoreboardSlot
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Axis
-import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
-import org.bukkit.OfflinePlayer
 import org.bukkit.Sound
 import org.bukkit.World
 import org.bukkit.advancement.Advancement
@@ -86,7 +71,6 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.Recipe
 import org.bukkit.loot.LootTable
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.potion.PotionEffectType
@@ -94,7 +78,6 @@ import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Team
 import java.util.EnumSet
 import java.util.UUID
-import java.util.concurrent.CompletableFuture
 import java.util.function.Predicate
 
 inline fun commandTree(
@@ -171,16 +154,6 @@ inline fun CommandTree.floatOptionalArgument(
     crossinline block: Argument<*>.((CommandArguments) -> Float?) -> Unit = {},
 ) = optionalArgument(FloatArgument(nodeName, min, max), block)
 
-inline fun CommandTree.floatRangeArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> FloatRange) -> Unit = {},
-) = argument(FloatRangeArgument(nodeName), block)
-
-inline fun CommandTree.floatRangeOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> FloatRange?) -> Unit = {},
-) = optionalArgument(FloatRangeArgument(nodeName), block)
-
 inline fun CommandTree.doubleArgument(
     nodeName: String,
     min: Double = -Double.MAX_VALUE,
@@ -194,6 +167,16 @@ inline fun CommandTree.doubleOptionalArgument(
     max: Double = Double.MAX_VALUE,
     crossinline block: Argument<*>.((CommandArguments) -> Double?) -> Unit = {},
 ) = optionalArgument(DoubleArgument(nodeName, min, max), block)
+
+inline fun CommandTree.doubleRangeArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> DoubleRange) -> Unit = {},
+) = argument(DoubleRangeArgument(nodeName), block)
+
+inline fun CommandTree.doubleRangeOptionalArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> DoubleRange?) -> Unit = {},
+) = optionalArgument(DoubleRangeArgument(nodeName), block)
 
 inline fun CommandTree.longArgument(
     nodeName: String,
@@ -297,66 +280,6 @@ inline fun CommandTree.axisOptionalArgument(
     crossinline block: Argument<*>.((CommandArguments) -> EnumSet<Axis>?) -> Unit = {},
 ) = optionalArgument(AxisArgument(nodeName), block)
 
-inline fun CommandTree.chatColorArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> ChatColor) -> Unit = {},
-) = argument(ChatColorArgument(nodeName), block)
-
-inline fun CommandTree.chatColorOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> ChatColor?) -> Unit = {},
-) = optionalArgument(ChatColorArgument(nodeName), block)
-
-inline fun CommandTree.chatComponentArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Array<BaseComponent>) -> Unit = {},
-) = argument(ChatComponentArgument(nodeName), block)
-
-inline fun CommandTree.chatComponentOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Array<BaseComponent>?) -> Unit = {},
-) = optionalArgument(ChatComponentArgument(nodeName), block)
-
-inline fun CommandTree.chatArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Array<BaseComponent>) -> Unit = {},
-) = argument(ChatArgument(nodeName), block)
-
-inline fun CommandTree.chatOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Array<BaseComponent>?) -> Unit = {},
-) = optionalArgument(ChatArgument(nodeName), block)
-
-inline fun CommandTree.adventureChatColorArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> NamedTextColor) -> Unit = {},
-) = argument(AdventureChatColorArgument(nodeName), block)
-
-inline fun CommandTree.adventureChatColorOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> NamedTextColor?) -> Unit = {},
-) = optionalArgument(AdventureChatColorArgument(nodeName), block)
-
-inline fun CommandTree.adventureChatComponentArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Component) -> Unit = {},
-) = argument(AdventureChatComponentArgument(nodeName), block)
-
-inline fun CommandTree.adventureChatComponentOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Component?) -> Unit = {},
-) = optionalArgument(AdventureChatComponentArgument(nodeName), block)
-
-inline fun CommandTree.adventureChatArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Component) -> Unit = {},
-) = argument(AdventureChatArgument(nodeName), block)
-
-inline fun CommandTree.adventureChatOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Component?) -> Unit = {},
-) = optionalArgument(AdventureChatArgument(nodeName), block)
-
 inline fun CommandTree.entitySelectorArgumentOneEntity(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Entity) -> Unit = {},
@@ -400,36 +323,6 @@ inline fun CommandTree.entitySelectorOptionalArgumentManyPlayers(
     allowEmpty: Boolean = true,
     crossinline block: Argument<*>.((CommandArguments) -> Collection<Player>?) -> Unit = {},
 ) = optionalArgument(EntitySelectorArgument.ManyPlayers(nodeName, allowEmpty), block)
-
-inline fun CommandTree.playerArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Player) -> Unit = {},
-) = argument(PlayerArgument(nodeName), block)
-
-inline fun CommandTree.playerOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Player?) -> Unit = {},
-) = optionalArgument(PlayerArgument(nodeName), block)
-
-inline fun CommandTree.offlinePlayerArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> OfflinePlayer) -> Unit = {},
-) = argument(OfflinePlayerArgument(nodeName), block)
-
-inline fun CommandTree.offlinePlayerOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> OfflinePlayer?) -> Unit = {},
-) = optionalArgument(OfflinePlayerArgument(nodeName), block)
-
-inline fun CommandTree.asyncOfflinePlayerArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<OfflinePlayer>) -> Unit = {},
-) = argument(AsyncOfflinePlayerArgument(nodeName), block)
-
-inline fun CommandTree.asyncOfflinePlayerOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<OfflinePlayer>?) -> Unit = {},
-) = optionalArgument(AsyncOfflinePlayerArgument(nodeName), block)
 
 inline fun CommandTree.entityTypeArgument(
     nodeName: String,
@@ -641,16 +534,6 @@ inline fun CommandTree.potionEffectNamespacedKeyOptionalArgument(
     crossinline block: Argument<*>.((CommandArguments) -> NamespacedKey?) -> Unit = {},
 ) = optionalArgument(PotionEffectArgument.NamespacedKey(nodeName), block)
 
-inline fun CommandTree.recipeArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Recipe) -> Unit = {},
-) = argument(RecipeArgument(nodeName), block)
-
-inline fun CommandTree.recipeOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Recipe?) -> Unit = {},
-) = optionalArgument(RecipeArgument(nodeName), block)
-
 inline fun CommandTree.soundArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Sound) -> Unit = {},
@@ -820,16 +703,6 @@ inline fun Argument<*>.floatOptionalArgument(
     crossinline block: Argument<*>.((CommandArguments) -> Float?) -> Unit = {},
 ) = optionalArgument(FloatArgument(nodeName, min, max), block)
 
-inline fun Argument<*>.floatRangeArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> FloatRange) -> Unit = {},
-) = argument(FloatRangeArgument(nodeName), block)
-
-inline fun Argument<*>.floatRangeOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> FloatRange?) -> Unit = {},
-) = optionalArgument(FloatRangeArgument(nodeName), block)
-
 inline fun Argument<*>.doubleArgument(
     nodeName: String,
     min: Double = -Double.MAX_VALUE,
@@ -843,6 +716,16 @@ inline fun Argument<*>.doubleOptionalArgument(
     max: Double = Double.MAX_VALUE,
     crossinline block: Argument<*>.((CommandArguments) -> Double?) -> Unit = {},
 ) = optionalArgument(DoubleArgument(nodeName, min, max), block)
+
+inline fun Argument<*>.doubleRangeArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> DoubleRange) -> Unit = {},
+) = argument(DoubleRangeArgument(nodeName), block)
+
+inline fun Argument<*>.doubleRangeOptionalArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> DoubleRange?) -> Unit = {},
+) = optionalArgument(DoubleRangeArgument(nodeName), block)
 
 inline fun Argument<*>.longArgument(
     nodeName: String,
@@ -946,66 +829,6 @@ inline fun Argument<*>.axisOptionalArgument(
     crossinline block: Argument<*>.((CommandArguments) -> EnumSet<Axis>?) -> Unit = {},
 ) = optionalArgument(AxisArgument(nodeName), block)
 
-inline fun Argument<*>.chatColorArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> ChatColor) -> Unit = {},
-) = argument(ChatColorArgument(nodeName), block)
-
-inline fun Argument<*>.chatColorOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> ChatColor?) -> Unit = {},
-) = optionalArgument(ChatColorArgument(nodeName), block)
-
-inline fun Argument<*>.chatComponentArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Array<BaseComponent>) -> Unit = {},
-) = argument(ChatComponentArgument(nodeName), block)
-
-inline fun Argument<*>.chatComponentOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Array<BaseComponent>?) -> Unit = {},
-) = optionalArgument(ChatComponentArgument(nodeName), block)
-
-inline fun Argument<*>.chatArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Array<BaseComponent>) -> Unit = {},
-) = argument(ChatArgument(nodeName), block)
-
-inline fun Argument<*>.chatOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Array<BaseComponent>?) -> Unit = {},
-) = optionalArgument(ChatArgument(nodeName), block)
-
-inline fun Argument<*>.adventureChatColorArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> NamedTextColor) -> Unit = {},
-) = argument(AdventureChatColorArgument(nodeName), block)
-
-inline fun Argument<*>.adventureChatColorOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> NamedTextColor?) -> Unit = {},
-) = optionalArgument(AdventureChatColorArgument(nodeName), block)
-
-inline fun Argument<*>.adventureChatComponentArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Component) -> Unit = {},
-) = argument(AdventureChatComponentArgument(nodeName), block)
-
-inline fun Argument<*>.adventureChatComponentOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Component?) -> Unit = {},
-) = optionalArgument(AdventureChatComponentArgument(nodeName), block)
-
-inline fun Argument<*>.adventureChatArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Component) -> Unit = {},
-) = argument(AdventureChatArgument(nodeName), block)
-
-inline fun Argument<*>.adventureChatOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Component?) -> Unit = {},
-) = optionalArgument(AdventureChatArgument(nodeName), block)
-
 inline fun Argument<*>.entitySelectorArgumentOneEntity(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Entity) -> Unit = {},
@@ -1047,36 +870,6 @@ inline fun Argument<*>.entitySelectorOptionalArgumentManyPlayers(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Collection<Player>?) -> Unit = {},
 ) = optionalArgument(EntitySelectorArgument.ManyPlayers(nodeName), block)
-
-inline fun Argument<*>.playerArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Player) -> Unit = {},
-) = argument(PlayerArgument(nodeName), block)
-
-inline fun Argument<*>.playerOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Player?) -> Unit = {},
-) = optionalArgument(PlayerArgument(nodeName), block)
-
-inline fun Argument<*>.offlinePlayerArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> OfflinePlayer) -> Unit = {},
-) = argument(OfflinePlayerArgument(nodeName), block)
-
-inline fun Argument<*>.offlinePlayerOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> OfflinePlayer?) -> Unit = {},
-) = optionalArgument(OfflinePlayerArgument(nodeName), block)
-
-inline fun Argument<*>.asyncOfflinePlayerArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<OfflinePlayer>) -> Unit = {},
-) = argument(AsyncOfflinePlayerArgument(nodeName), block)
-
-inline fun Argument<*>.asyncOfflinePlayerOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<OfflinePlayer>?) -> Unit = {},
-) = optionalArgument(AsyncOfflinePlayerArgument(nodeName), block)
 
 inline fun Argument<*>.entityTypeArgument(
     nodeName: String,
@@ -1287,16 +1080,6 @@ inline fun Argument<*>.potionEffectNamespacedKeyOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> NamespacedKey?) -> Unit = {},
 ) = optionalArgument(PotionEffectArgument.NamespacedKey(nodeName), block)
-
-inline fun Argument<*>.recipeArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Recipe) -> Unit = {},
-) = argument(RecipeArgument(nodeName), block)
-
-inline fun Argument<*>.recipeOptionalArgument(
-    nodeName: String,
-    crossinline block: Argument<*>.((CommandArguments) -> Recipe?) -> Unit = {},
-) = optionalArgument(RecipeArgument(nodeName), block)
 
 inline fun Argument<*>.soundArgument(
     nodeName: String,
