@@ -24,7 +24,7 @@ inline fun CommandTree.chatColorArgument(
 inline fun CommandTree.chatColorOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> NamedTextColor?) -> Unit = {},
-) = optionalArgument(ChatColorArgument(nodeName).setOptional(true), block)
+) = optionalArgument(ChatColorArgument(nodeName), block)
 
 inline fun CommandTree.chatComponentArgument(
     nodeName: String,
@@ -34,7 +34,7 @@ inline fun CommandTree.chatComponentArgument(
 inline fun CommandTree.chatComponentOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Component?) -> Unit = {},
-) = optionalArgument(ChatComponentArgument(nodeName).setOptional(true), block)
+) = optionalArgument(ChatComponentArgument(nodeName), block)
 
 inline fun CommandTree.chatArgument(
     nodeName: String,
@@ -44,7 +44,7 @@ inline fun CommandTree.chatArgument(
 inline fun CommandTree.chatOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> SignedMessage?) -> Unit = {},
-) = optionalArgument(ChatArgument(nodeName).setOptional(true), block)
+) = optionalArgument(ChatArgument(nodeName), block)
 
 inline fun CommandTree.playerProfileArgument(
     nodeName: String,
@@ -54,7 +54,7 @@ inline fun CommandTree.playerProfileArgument(
 inline fun CommandTree.playerProfileOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> List<PlayerProfile>?) -> Unit = {},
-) = optionalArgument(PlayerProfileArgument(nodeName).setOptional(true), block)
+) = optionalArgument(PlayerProfileArgument(nodeName), block)
 
 inline fun CommandTree.asyncPlayerProfileArgument(
     nodeName: String,
@@ -64,7 +64,7 @@ inline fun CommandTree.asyncPlayerProfileArgument(
 inline fun CommandTree.asyncPlayerProfileOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<List<PlayerProfile>>?) -> Unit = {},
-) = optionalArgument(AsyncPlayerProfileArgument(nodeName).setOptional(true), block)
+) = optionalArgument(AsyncPlayerProfileArgument(nodeName), block)
 
 inline fun CommandTree.recipeArgument(
     nodeName: String,
@@ -74,7 +74,7 @@ inline fun CommandTree.recipeArgument(
 inline fun CommandTree.recipeOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Recipe?) -> Unit = {},
-) = optionalArgument(RecipeArgument(nodeName).setOptional(true), block)
+) = optionalArgument(RecipeArgument(nodeName), block)
 
 inline fun Argument<*>.chatColorArgument(
     nodeName: String,
@@ -84,7 +84,7 @@ inline fun Argument<*>.chatColorArgument(
 inline fun Argument<*>.chatColorOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> NamedTextColor?) -> Unit = {},
-) = optionalArgument(ChatColorArgument(nodeName).setOptional(true), block)
+) = optionalArgument(ChatColorArgument(nodeName), block)
 
 inline fun Argument<*>.chatComponentArgument(
     nodeName: String,
@@ -94,7 +94,7 @@ inline fun Argument<*>.chatComponentArgument(
 inline fun Argument<*>.chatComponentOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Component?) -> Unit = {},
-) = optionalArgument(ChatComponentArgument(nodeName).setOptional(true), block)
+) = optionalArgument(ChatComponentArgument(nodeName), block)
 
 inline fun Argument<*>.chatArgument(
     nodeName: String,
@@ -104,7 +104,7 @@ inline fun Argument<*>.chatArgument(
 inline fun Argument<*>.chatOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> SignedMessage?) -> Unit = {},
-) = optionalArgument(ChatArgument(nodeName).setOptional(true), block)
+) = optionalArgument(ChatArgument(nodeName), block)
 
 inline fun Argument<*>.playerProfileArgument(
     nodeName: String,
@@ -114,7 +114,7 @@ inline fun Argument<*>.playerProfileArgument(
 inline fun Argument<*>.playerProfileOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> List<PlayerProfile>?) -> Unit = {},
-) = optionalArgument(PlayerProfileArgument(nodeName).setOptional(true), block)
+) = optionalArgument(PlayerProfileArgument(nodeName), block)
 
 inline fun Argument<*>.asyncPlayerProfileArgument(
     nodeName: String,
@@ -124,7 +124,7 @@ inline fun Argument<*>.asyncPlayerProfileArgument(
 inline fun Argument<*>.asyncPlayerProfileOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<List<PlayerProfile>>?) -> Unit = {},
-) = optionalArgument(AsyncPlayerProfileArgument(nodeName).setOptional(true), block)
+) = optionalArgument(AsyncPlayerProfileArgument(nodeName), block)
 
 inline fun Argument<*>.recipeArgument(
     nodeName: String,
@@ -134,4 +134,4 @@ inline fun Argument<*>.recipeArgument(
 inline fun Argument<*>.recipeOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> Recipe?) -> Unit = {},
-) = optionalArgument(RecipeArgument(nodeName).setOptional(true), block)
+) = optionalArgument(RecipeArgument(nodeName), block)

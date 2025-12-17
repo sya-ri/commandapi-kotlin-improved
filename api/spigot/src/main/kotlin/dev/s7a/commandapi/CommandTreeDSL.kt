@@ -55,7 +55,7 @@ inline fun CommandTree.playerProfileArgument(
 inline fun CommandTree.playerProfileOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> List<PlayerProfile>?) -> Unit = {},
-) = optionalArgument(PlayerProfileArgument(nodeName).setOptional(true), block)
+) = optionalArgument(PlayerProfileArgument(nodeName), block)
 
 inline fun CommandTree.asyncPlayerProfileArgument(
     nodeName: String,
@@ -65,7 +65,7 @@ inline fun CommandTree.asyncPlayerProfileArgument(
 inline fun CommandTree.asyncPlayerProfileOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<List<PlayerProfile>>?) -> Unit = {},
-) = optionalArgument(AsyncPlayerProfileArgument(nodeName).setOptional(true), block)
+) = optionalArgument(AsyncPlayerProfileArgument(nodeName), block)
 
 inline fun CommandTree.recipeArgument(
     nodeName: String,
@@ -115,7 +115,7 @@ inline fun Argument<*>.playerProfileArgument(
 inline fun Argument<*>.playerProfileOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> List<PlayerProfile>?) -> Unit = {},
-) = optionalArgument(PlayerProfileArgument(nodeName).setOptional(true), block)
+) = optionalArgument(PlayerProfileArgument(nodeName), block)
 
 inline fun Argument<*>.asyncPlayerProfileArgument(
     nodeName: String,
@@ -125,7 +125,7 @@ inline fun Argument<*>.asyncPlayerProfileArgument(
 inline fun Argument<*>.asyncPlayerProfileOptionalArgument(
     nodeName: String,
     crossinline block: Argument<*>.((CommandArguments) -> CompletableFuture<List<PlayerProfile>>?) -> Unit = {},
-) = optionalArgument(AsyncPlayerProfileArgument(nodeName).setOptional(true), block)
+) = optionalArgument(AsyncPlayerProfileArgument(nodeName), block)
 
 inline fun Argument<*>.recipeArgument(
     nodeName: String,

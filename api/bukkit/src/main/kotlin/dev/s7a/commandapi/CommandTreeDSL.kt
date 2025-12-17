@@ -43,6 +43,7 @@ import dev.jorel.commandapi.arguments.ScoreHolderArgument
 import dev.jorel.commandapi.arguments.ScoreboardSlotArgument
 import dev.jorel.commandapi.arguments.SoundArgument
 import dev.jorel.commandapi.arguments.StringArgument
+import dev.jorel.commandapi.arguments.TeamArgument
 import dev.jorel.commandapi.arguments.TextArgument
 import dev.jorel.commandapi.arguments.TimeArgument
 import dev.jorel.commandapi.arguments.UUIDArgument
