@@ -569,7 +569,7 @@ recipeArgument("recipe") { getRecipe ->
 ### Generic / Custom Arguments
 
 Use `argument` / `optionalArgument` directly when the type is not covered by a built-in helper,
-or when you want to wrap a `CustomArgument`.
+or when you want to wrap a `CustomArgument` on an ad-hoc basis.
 
 ```kotlin
 // On CommandTree
@@ -597,6 +597,67 @@ optionalArgument<MyType, MySubType>(MyCustomArgument("argName")) { getValue ->
     }
 }
 ```
+
+### Creating a First-Class Custom Argument Function
+
+To call your custom argument the same way as the built-in ones — e.g. `speedModeArgument("mode") { getMode -> ... }` —
+define it as `inline` extension functions on both `CommandTree` and `Argument<*>`, mirroring the pattern the library uses internally.
+
+```kotlin
+import dev.jorel.commandapi.CommandTree
+import dev.jorel.commandapi.arguments.Argument
+import dev.jorel.commandapi.arguments.CustomArgument
+import dev.jorel.commandapi.arguments.CustomArgument.CustomArgumentException
+import dev.jorel.commandapi.arguments.MultiLiteralArgument
+import dev.jorel.commandapi.executors.CommandArguments
+
+enum class SpeedMode { WALK, FLY, SWIM }
+
+@Suppress("FunctionName")
+fun SpeedModeArgument(nodeName: String) =
+    CustomArgument(
+        MultiLiteralArgument(nodeName, *SpeedMode.entries.map { it.name.lowercase() }.toTypedArray())
+    ) { info ->
+        SpeedMode.entries.firstOrNull { it.name.equals(info.input(), ignoreCase = true) }
+            ?: throw CustomArgumentException.fromString("Unknown mode: ${info.input()}")
+    }
+
+// Extension on CommandTree — usable at the root level
+inline fun CommandTree.speedModeArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> SpeedMode) -> Unit = {},
+) = argument(SpeedModeArgument(nodeName), block)
+
+// Extension on Argument<*> — usable when nested inside another argument
+inline fun Argument<*>.speedModeArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> SpeedMode) -> Unit = {},
+) = argument(SpeedModeArgument(nodeName), block)
+```
+
+Usage is now identical to any built-in argument:
+
+```kotlin
+commandTree("speed") {
+    speedModeArgument("mode") { getMode ->
+        floatArgument("value", min = 0.0f, max = 1.0f) { getValue ->
+            playerExecutor { sender, args ->
+                val mode: SpeedMode = getMode(args)   // SpeedMode, not String
+                val value = getValue(args)
+                when (mode) {
+                    SpeedMode.WALK -> sender.walkSpeed = value
+                    SpeedMode.FLY  -> sender.flySpeed  = value
+                    SpeedMode.SWIM -> { /* handle swim speed */ }
+                }
+                sender.sendMessage("Set ${mode.name.lowercase()} speed to $value")
+            }
+        }
+    }
+}
+```
+
+The same pattern works for any type — wrap whatever `Argument<T>` you need in the raw factory function
+and expose it through `CommandTree` and `Argument<*>` extensions.
 
 ---
 
@@ -771,26 +832,36 @@ commandTree("greet") {
 
 ### Example 1: Custom argument wrapping an enum
 
-When using `multiLiteralArgument` to represent a set of enum values, wrapping it in a
-`CustomArgument` is cleaner than scattering `valueOf` calls throughout executors.
+Defining a first-class DSL function (see "Creating a First-Class Custom Argument Function" above)
+lets the call site look identical to any built-in argument. The enum conversion and error handling
+live in one place; executors just receive `SpeedMode` directly.
 
 ```kotlin
-import dev.jorel.commandapi.arguments.CustomArgument
-import dev.jorel.commandapi.arguments.CustomArgument.CustomArgumentException
-import dev.jorel.commandapi.arguments.MultiLiteralArgument
-
+// Definition (typically in a shared file)
 enum class SpeedMode { WALK, FLY, SWIM }
 
-fun speedModeArgument(nodeName: String) =
+@Suppress("FunctionName")
+fun SpeedModeArgument(nodeName: String) =
     CustomArgument(
         MultiLiteralArgument(nodeName, *SpeedMode.entries.map { it.name.lowercase() }.toTypedArray())
     ) { info ->
         SpeedMode.entries.firstOrNull { it.name.equals(info.input(), ignoreCase = true) }
-            ?: throw CustomArgumentException.fromString("Unknown mode: ${info.input()}")
+            ?: throw CustomArgument.CustomArgumentException.fromString("Unknown mode: ${info.input()}")
     }
 
+inline fun CommandTree.speedModeArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> SpeedMode) -> Unit = {},
+) = argument(SpeedModeArgument(nodeName), block)
+
+inline fun Argument<*>.speedModeArgument(
+    nodeName: String,
+    crossinline block: Argument<*>.((CommandArguments) -> SpeedMode) -> Unit = {},
+) = argument(SpeedModeArgument(nodeName), block)
+
+// Usage — indistinguishable from a built-in argument
 commandTree("speed") {
-    argument(speedModeArgument("mode")) { getMode ->
+    speedModeArgument("mode") { getMode ->
         floatArgument("value", min = 0.0f, max = 1.0f) { getValue ->
             playerExecutor { sender, args ->
                 val mode: SpeedMode = getMode(args)
