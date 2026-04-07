@@ -1,0 +1,1060 @@
+# commandapi-kotlin-improved — LLM Reference Document
+
+## Overview
+
+`commandapi-kotlin-improved` is a Kotlin DSL extension library that improves upon the official Kotlin DSL
+bundled with [CommandAPI](https://github.com/JorelAli/CommandAPI), a command registration library for
+Minecraft plugins. It is a drop-in replacement for the official DSL (`dev.jorel.commandapi.kotlindsl`)
+and its primary improvement is **type-safe argument value retrieval**.
+
+- **Repository**: https://github.com/sya-ri/commandapi-kotlin-improved
+- **Supported CommandAPI version**: 11.1.0
+- **Kotlin version**: 2.3.0
+- **Java version**: 17
+- **License**: MIT
+- **Author**: sya-ri (contact@s7a.dev)
+- **Maven Group ID**: `dev.s7a`
+
+---
+
+## Supported Platforms and Artifacts
+
+| Platform | Artifact ID | Target |
+|---|---|---|
+| Bukkit | `commandapi-bukkit-kotlin-improved` | Bukkit / CraftBukkit |
+| Paper | `commandapi-paper-kotlin-improved` | Paper (superset of Bukkit) |
+| Spigot | `commandapi-spigot-kotlin-improved` | Spigot (superset of Bukkit + Spigot-specific arguments) |
+| Velocity | `commandapi-velocity-kotlin-improved` | Velocity proxy server |
+
+Paper and Spigot include all Bukkit arguments plus their own extras.
+Velocity is an independent implementation without Minecraft-specific arguments.
+
+---
+
+## Installation
+
+### build.gradle.kts (Gradle Kotlin DSL)
+
+```kotlin
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Pick one based on your platform:
+    compileOnly("dev.s7a:commandapi-paper-kotlin-improved:1.3.0")
+    compileOnly("dev.s7a:commandapi-spigot-kotlin-improved:1.3.0")
+    compileOnly("dev.s7a:commandapi-bukkit-kotlin-improved:1.3.0")
+    compileOnly("dev.s7a:commandapi-velocity-kotlin-improved:1.3.0")
+}
+```
+
+### build.gradle (Groovy DSL)
+
+```groovy
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'dev.s7a:commandapi-paper-kotlin-improved:1.3.0'
+}
+```
+
+### Notes
+
+- This library depends on CommandAPI itself. You still need to set up CommandAPI separately
+  (add it to `plugin.yml` as a dependency, or shade it into your plugin JAR).
+- With `compileOnly`, the CommandAPI JAR must be present at runtime. If you are shading the library
+  into your plugin, use `implementation` with the appropriate shadow/relocation configuration.
+
+---
+
+## CommandAPI Initialization
+
+CommandAPI must be initialized before registering commands. Example for Paper:
+
+```kotlin
+import dev.jorel.commandapi.CommandAPI
+import dev.jorel.commandapi.CommandAPIPaperConfig
+import org.bukkit.plugin.java.JavaPlugin
+
+class MyPlugin : JavaPlugin() {
+    override fun onLoad() {
+        CommandAPI.onLoad(CommandAPIPaperConfig(this).verboseOutput(true))
+        // Register commands here, not in onEnable
+        registerCommands()
+    }
+
+    override fun onEnable() {
+        CommandAPI.onEnable()
+    }
+
+    override fun onDisable() {
+        CommandAPI.onDisable()
+    }
+}
+```
+
+---
+
+## Difference from the Official DSL
+
+### Official DSL — unsafe cast
+
+```kotlin
+// Package: dev.jorel.commandapi.kotlindsl
+import dev.jorel.commandapi.kotlindsl.*
+
+commandTree("example") {
+    literalArgument("integer") {
+        integerArgument("value") {
+            anyExecutor { sender, args ->
+                val value = args.get("value") as Int  // dangerous cast
+                sender.sendMessage("You entered: $value")
+            }
+        }
+    }
+}
+```
+
+### Improved DSL — type-safe getter
+
+```kotlin
+// Package: dev.s7a.commandapi
+import dev.s7a.commandapi.*
+
+commandTree("example") {
+    literalArgument("integer") {
+        integerArgument("value") { getValue ->  // getValue: (CommandArguments) -> Int
+            anyExecutor { sender, args ->
+                val value = getValue(args)  // returns Int, no cast needed
+                sender.sendMessage("You entered: $value")
+            }
+        }
+    }
+}
+```
+
+**Key improvements**:
+- Each argument function's lambda receives a getter `(CommandArguments) -> T` as its parameter.
+- Calling the getter inside an executor returns the correctly typed value without casting.
+- Optional arguments provide `(CommandArguments) -> T?` (nullable).
+- Type errors are caught at compile time — no `ClassCastException` at runtime.
+
+---
+
+## Basic Usage
+
+### Imports
+
+Either wildcard or explicit imports are fine.
+
+```kotlin
+// Wildcard import
+import dev.s7a.commandapi.*
+
+// Explicit imports (if you prefer)
+import dev.s7a.commandapi.commandTree
+import dev.s7a.commandapi.literalArgument
+import dev.s7a.commandapi.integerArgument
+import dev.s7a.commandapi.anyExecutor
+```
+
+### commandTree — Registering a Command
+
+```kotlin
+// Basic
+commandTree("mycommand") {
+    // add subcommands or arguments here
+}
+
+// With a string namespace
+commandTree("mycommand", "myplugin") {
+    // accessible as both /mycommand and /myplugin:mycommand
+}
+
+// With a JavaPlugin namespace
+commandTree("mycommand", this) {
+    // namespace is derived from the plugin name
+}
+```
+
+---
+
+## Arguments DSL
+
+All argument functions are extension functions on both `CommandTree` and `Argument<*>`,
+so you can nest them freely at any level.
+
+### Common Pattern
+
+```kotlin
+// Required argument
+someArgument("nodeName") { getValue ->
+    // getValue: (CommandArguments) -> T
+    anyExecutor { sender, args ->
+        val v = getValue(args)  // T
+    }
+}
+
+// Optional argument (xxxOptionalArgument)
+someOptionalArgument("nodeName") { getValue ->
+    // getValue: (CommandArguments) -> T?
+    anyExecutor { sender, args ->
+        val v = getValue(args)  // T? — may be null
+    }
+}
+```
+
+### Numeric Arguments
+
+```kotlin
+// Int — defaults: min = Int.MIN_VALUE, max = Int.MAX_VALUE
+integerArgument("count", min = 1, max = 64) { getCount ->
+    anyExecutor { sender, args ->
+        val count: Int = getCount(args)
+    }
+}
+
+// Float
+floatArgument("speed", min = 0.0f, max = 10.0f) { getSpeed ->
+    anyExecutor { sender, args ->
+        val speed: Float = getSpeed(args)
+    }
+}
+
+// Double
+doubleArgument("ratio") { getRatio ->
+    anyExecutor { sender, args ->
+        val ratio: Double = getRatio(args)
+    }
+}
+
+// Long
+longArgument("timestamp") { getTimestamp ->
+    anyExecutor { sender, args ->
+        val ts: Long = getTimestamp(args)
+    }
+}
+
+// IntegerRange — accepts input like "1..10" or "5.."
+integerRangeArgument("range") { getRange ->
+    anyExecutor { sender, args ->
+        val range: IntegerRange = getRange(args)
+        // range.lowerBound, range.upperBound
+    }
+}
+
+// DoubleRange
+doubleRangeArgument("range") { getRange ->
+    anyExecutor { sender, args ->
+        val range: DoubleRange = getRange(args)
+    }
+}
+```
+
+### String Arguments
+
+```kotlin
+// Single word (no spaces)
+stringArgument("name") { getName ->
+    anyExecutor { sender, args ->
+        val name: String = getName(args)
+    }
+}
+
+// Quoted text — allows spaces ("hello world")
+textArgument("message") { getMessage ->
+    anyExecutor { sender, args ->
+        val msg: String = getMessage(args)
+    }
+}
+
+// Greedy — consumes everything to the end of input (must be the last argument)
+greedyStringArgument("reason") { getReason ->
+    anyExecutor { sender, args ->
+        val reason: String = getReason(args)
+    }
+}
+```
+
+### Boolean Argument
+
+```kotlin
+booleanArgument("enabled") { getEnabled ->
+    anyExecutor { sender, args ->
+        val enabled: Boolean = getEnabled(args)
+    }
+}
+```
+
+### Literal Arguments (Fixed Keywords)
+
+```kotlin
+// literalArgument — nodeName and literal are the same by default
+commandTree("mycommand") {
+    literalArgument("enable") {
+        anyExecutor { sender, args -> sender.sendMessage("Enabled!") }
+    }
+    literalArgument("disable") {
+        anyExecutor { sender, args -> sender.sendMessage("Disabled!") }
+    }
+}
+
+// Different nodeName and literal
+literalArgument("on", literal = "enable") { getValue ->
+    // getValue: (CommandArguments) -> String — returns the matched literal
+}
+
+// multiLiteralArgument — accepts any one of the listed strings
+multiLiteralArgument("mode", "fast", "slow", "normal") { getMode ->
+    anyExecutor { sender, args ->
+        val mode: String = getMode(args)  // one of "fast", "slow", "normal"
+    }
+}
+```
+
+### Location / Rotation Arguments
+
+```kotlin
+import dev.jorel.commandapi.arguments.LocationType
+
+// 3D coordinate (PRECISE_POSITION or BLOCK_POSITION)
+locationArgument("pos", LocationType.BLOCK_POSITION) { getPos ->
+    anyExecutor { sender, args ->
+        val loc: Location = getPos(args)
+    }
+}
+
+// 2D coordinate (X and Z only)
+location2DArgument("pos2d") { getPos ->
+    anyExecutor { sender, args ->
+        val loc: Location2D = getPos(args)
+    }
+}
+
+// Rotation (yaw, pitch)
+rotationArgument("rot") { getRot ->
+    anyExecutor { sender, args ->
+        val rot: Rotation = getRot(args)
+    }
+}
+
+// Axis (combination of x, y, z)
+axisArgument("axes") { getAxes ->
+    anyExecutor { sender, args ->
+        val axes: EnumSet<Axis> = getAxes(args)
+    }
+}
+```
+
+### Entity / Player Selector Arguments
+
+```kotlin
+// Single entity (@e[type=zombie], etc.)
+entitySelectorArgumentOneEntity("target") { getTarget ->
+    anyExecutor { sender, args ->
+        val entity: Entity = getTarget(args)
+    }
+}
+
+// Multiple entities
+entitySelectorArgumentManyEntities("targets", allowEmpty = false) { getTargets ->
+    anyExecutor { sender, args ->
+        val entities: Collection<Entity> = getTargets(args)
+    }
+}
+
+// Single player
+entitySelectorArgumentOnePlayer("player") { getPlayer ->
+    anyExecutor { sender, args ->
+        val player: Player = getPlayer(args)
+    }
+}
+
+// Multiple players
+entitySelectorArgumentManyPlayers("players") { getPlayers ->
+    anyExecutor { sender, args ->
+        val players: Collection<Player> = getPlayers(args)
+    }
+}
+
+// EntityType enum value
+entityTypeArgument("type") { getType ->
+    anyExecutor { sender, args ->
+        val type: EntityType = getType(args)
+    }
+}
+```
+
+### Scoreboard Arguments
+
+```kotlin
+// Score holder — single player/fake player name
+scoreHolderArgumentSingle("holder") { getHolder ->
+    anyExecutor { sender, args ->
+        val holder: String = getHolder(args)
+    }
+}
+
+// Score holder — multiple
+scoreHolderArgumentMultiple("holders") { getHolders ->
+    anyExecutor { sender, args ->
+        val holders: Collection<String> = getHolders(args)
+    }
+}
+
+// Scoreboard slot
+scoreboardSlotArgument("slot") { getSlot ->
+    anyExecutor { sender, args ->
+        val slot: ScoreboardSlot = getSlot(args)
+    }
+}
+
+// Objective
+objectiveArgument("obj") { getObj ->
+    anyExecutor { sender, args ->
+        val obj: Objective = getObj(args)
+    }
+}
+
+// Objective criteria
+objectiveCriteriaArgument("criteria") { getCriteria ->
+    anyExecutor { sender, args ->
+        val criteria: String = getCriteria(args)
+    }
+}
+
+// Team
+teamArgument("team") { getTeam ->
+    anyExecutor { sender, args ->
+        val team: Team = getTeam(args)
+    }
+}
+```
+
+### Minecraft-Specific Arguments (Bukkit / Paper / Spigot)
+
+```kotlin
+angleArgument("angle") { getAngle ->
+    anyExecutor { sender, args -> val angle: Float = getAngle(args) }
+}
+
+advancementArgument("advancement") { getAdv ->
+    anyExecutor { sender, args -> val adv: Advancement = getAdv(args) }
+}
+
+biomeArgument("biome") { getBiome ->
+    anyExecutor { sender, args -> val biome: Biome = getBiome(args) }
+}
+
+biomeNamespacedKeyArgument("biome") { getKey ->
+    anyExecutor { sender, args -> val key: NamespacedKey = getKey(args) }
+}
+
+blockStateArgument("block") { getBlock ->
+    anyExecutor { sender, args -> val block: BlockState = getBlock(args) }
+}
+
+commandArgument("cmd") { getCmd ->
+    anyExecutor { sender, args -> val cmd: CommandResult = getCmd(args) }
+}
+
+enchantmentArgument("enchant") { getEnchant ->
+    anyExecutor { sender, args -> val enchant: Enchantment = getEnchant(args) }
+}
+
+itemStackArgument("item") { getItem ->
+    anyExecutor { sender, args -> val item: ItemStack = getItem(args) }
+}
+
+lootTableArgument("loot") { getLoot ->
+    anyExecutor { sender, args -> val loot: LootTable = getLoot(args) }
+}
+
+mathOperationArgument("op") { getOp ->
+    anyExecutor { sender, args -> val op: MathOperation = getOp(args) }
+}
+
+namespacedKeyArgument("key") { getKey ->
+    anyExecutor { sender, args -> val key: NamespacedKey = getKey(args) }
+}
+
+particleArgument("particle") { getParticle ->
+    anyExecutor { sender, args -> val particle: ParticleData<*> = getParticle(args) }
+}
+
+potionEffectArgument("effect") { getEffect ->
+    anyExecutor { sender, args -> val effect: PotionEffectType = getEffect(args) }
+}
+
+potionEffectNamespacedKeyArgument("effect") { getKey ->
+    anyExecutor { sender, args -> val key: NamespacedKey = getKey(args) }
+}
+
+soundArgument("sound") { getSound ->
+    anyExecutor { sender, args -> val sound: Sound = getSound(args) }
+}
+
+soundNamespacedKeyArgument("sound") { getKey ->
+    anyExecutor { sender, args -> val key: NamespacedKey = getKey(args) }
+}
+
+// Time — returned as tick count (Int)
+timeArgument("time") { getTime ->
+    anyExecutor { sender, args -> val ticks: Int = getTime(args) }
+}
+
+uuidArgument("uuid") { getUuid ->
+    anyExecutor { sender, args -> val uuid: UUID = getUuid(args) }
+}
+
+worldArgument("world") { getWorld ->
+    anyExecutor { sender, args -> val world: World = getWorld(args) }
+}
+
+blockPredicateArgument("pred") { getPred ->
+    anyExecutor { sender, args -> val pred: Predicate<Block> = getPred(args) }
+}
+
+itemStackPredicateArgument("pred") { getPred ->
+    anyExecutor { sender, args -> val pred: Predicate<ItemStack> = getPred(args) }
+}
+
+// NBT compound — requires an NBT API library at runtime
+nbtCompoundArgument<NBTContainer>("nbt") { getNbt ->
+    anyExecutor { sender, args -> val nbt: NBTContainer = getNbt(args) }
+}
+
+// Minecraft function (mcfunction)
+functionArgument("func") { getFunc ->
+    anyExecutor { sender, args -> val functions: Array<FunctionWrapper> = getFunc(args) }
+}
+```
+
+### Spigot-Specific Arguments
+
+Available only with `commandapi-spigot-kotlin-improved`.
+
+```kotlin
+chatColorArgument("color") { getColor ->
+    anyExecutor { sender, args -> val color: ChatColor = getColor(args) }
+}
+
+// BungeeCord BaseComponent[]
+chatComponentArgument("component") { getComp ->
+    anyExecutor { sender, args -> val comp: Array<BaseComponent> = getComp(args) }
+}
+
+chatArgument("chat") { getChat ->
+    anyExecutor { sender, args -> val chat: Array<BaseComponent> = getChat(args) }
+}
+
+playerProfileArgument("profile") { getProfile ->
+    anyExecutor { sender, args -> val profiles: List<PlayerProfile> = getProfile(args) }
+}
+
+asyncPlayerProfileArgument("profile") { getProfile ->
+    anyExecutor { sender, args ->
+        val future: CompletableFuture<List<PlayerProfile>> = getProfile(args)
+    }
+}
+
+recipeArgument("recipe") { getRecipe ->
+    anyExecutor { sender, args -> val recipe: Recipe = getRecipe(args) }
+}
+```
+
+### Generic / Custom Arguments
+
+Use `argument` / `optionalArgument` directly when the type is not covered by a built-in helper,
+or when you want to wrap a `CustomArgument`.
+
+```kotlin
+// On CommandTree
+commandTree("mycommand") {
+    argument<MyType, MySubType>(MyCustomArgument("argName")) { getValue ->
+        anyExecutor { sender, args ->
+            val v: MySubType = getValue(args)
+        }
+    }
+}
+
+// On Argument (nested)
+literalArgument("sub") {
+    argument<MyType, MySubType>(MyCustomArgument("argName")) { getValue ->
+        anyExecutor { sender, args ->
+            val v: MySubType = getValue(args)
+        }
+    }
+}
+
+// Optional variant
+optionalArgument<MyType, MySubType>(MyCustomArgument("argName")) { getValue ->
+    anyExecutor { sender, args ->
+        val v: MySubType? = getValue(args)
+    }
+}
+```
+
+---
+
+## Executors DSL
+
+Executor functions are extension functions on `BukkitExecutable<*>` (or `VelocityExecutable<*>` on Velocity).
+Call them inside an argument block.
+
+### Bukkit / Paper / Spigot
+
+#### Standard Executors (no return value)
+
+```kotlin
+// Any sender
+anyExecutor { sender: CommandSender, args: CommandArguments ->
+    sender.sendMessage("Hello!")
+}
+
+// Players only — non-player senders cannot run the command
+playerExecutor { sender: Player, args: CommandArguments ->
+    sender.sendMessage("Hi, ${sender.name}!")
+}
+
+// Entities only
+entityExecutor { sender: Entity, args: CommandArguments -> }
+
+// Console only
+consoleExecutor { sender: ConsoleCommandSender, args: CommandArguments -> }
+
+// Command block only
+commandBlockExecutor { sender: BlockCommandSender, args: CommandArguments -> }
+
+// Proxied sender (e.g. "execute ... run")
+proxyExecutor { sender: ProxiedCommandSender, args: CommandArguments -> }
+
+// Native proxy
+nativeExecutor { sender: NativeProxyCommandSender, args: CommandArguments -> }
+
+// Remote console (RCON)
+remoteConsoleExecutor { sender: RemoteConsoleCommandSender, args: CommandArguments -> }
+```
+
+#### Resulting Executors (return Int)
+
+Return a result code for the command. `0` means failure; a positive value means success.
+
+```kotlin
+anyResultingExecutor { sender: CommandSender, args: CommandArguments -> 1 }
+playerResultingExecutor { sender: Player, args: CommandArguments -> if (sender.isOp) 1 else 0 }
+
+// Also available: entityResultingExecutor, consoleResultingExecutor,
+// commandBlockResultingExecutor, proxyResultingExecutor,
+// nativeResultingExecutor, remoteConsoleResultingExecutor
+```
+
+#### ExecutionInfo Executors
+
+Provides a richer `ExecutionInfo` context (access to the command node, etc.).
+
+```kotlin
+anyExecutionInfo { info: ExecutionInfo<CommandSender, BukkitCommandSender<out CommandSender>> ->
+    val sender = info.sender()
+    val args   = info.args()
+    sender.sendMessage("Executed!")
+}
+
+playerExecutionInfo { info: ExecutionInfo<Player, BukkitPlayer> ->
+    info.sender().sendMessage("Player: ${info.sender().name}")
+}
+
+// Resulting variants
+anyResultingExecutionInfo { info -> 1 }
+playerResultingExecutionInfo { info -> 1 }
+
+// Also available for every sender type:
+// entityExecutionInfo, consoleExecutionInfo, commandBlockExecutionInfo,
+// proxyExecutionInfo, nativeExecutionInfo, remoteConsoleExecutionInfo
+// and their Resulting counterparts
+```
+
+### Velocity
+
+```kotlin
+anyExecutor { sender: CommandSource, args: CommandArguments ->
+    sender.sendMessage(Component.text("Hello!"))
+}
+
+playerExecutor { sender: Player, args: CommandArguments ->
+    sender.sendMessage(Component.text("Hi, ${sender.username}!"))
+}
+
+consoleExecutor { sender: ConsoleCommandSource, args: CommandArguments -> }
+
+// Resulting variants
+anyResultingExecutor    { sender, args -> 1 }
+playerResultingExecutor { sender, args -> 1 }
+consoleResultingExecutor { sender, args -> 1 }
+
+// ExecutionInfo variants
+anyExecutionInfo    { info: ExecutionInfo<CommandSource, VelocityCommandSender<out CommandSource>> -> }
+playerExecutionInfo { info: ExecutionInfo<Player, VelocityPlayer> -> }
+consoleExecutionInfo { info: ExecutionInfo<ConsoleCommandSource, VelocityConsoleCommandSender> -> }
+
+// Resulting ExecutionInfo variants
+anyResultingExecutionInfo    { info -> 1 }
+playerResultingExecutionInfo { info -> 1 }
+consoleResultingExecutionInfo { info -> 1 }
+```
+
+---
+
+## Nesting (Subcommands)
+
+Arguments can be nested to any depth. Use `literalArgument` for subcommand keywords.
+
+```kotlin
+commandTree("admin") {
+    // /admin reload
+    literalArgument("reload") {
+        anyExecutor { sender, args ->
+            sender.sendMessage("Reloaded!")
+        }
+    }
+
+    // /admin set <player> <value>
+    literalArgument("set") {
+        entitySelectorArgumentOnePlayer("player") { getPlayer ->
+            integerArgument("value", min = 0, max = 100) { getValue ->
+                anyExecutor { sender, args ->
+                    val player = getPlayer(args)
+                    val value  = getValue(args)
+                    sender.sendMessage("Set ${player.name}'s value to $value")
+                }
+            }
+        }
+    }
+
+    // /admin info [player]  ← optional
+    literalArgument("info") {
+        entitySelectorOptionalArgumentOnePlayer("player") { getPlayer ->
+            anyExecutor { sender, args ->
+                val player: Player? = getPlayer(args)
+                sender.sendMessage(
+                    if (player != null) "Info for: ${player.name}" else "No player specified"
+                )
+            }
+        }
+    }
+}
+```
+
+---
+
+## Optional Arguments
+
+Use `xxxOptionalArgument` to make an argument skippable. The getter returns `T?`.
+
+```kotlin
+commandTree("greet") {
+    stringOptionalArgument("name") { getName ->
+        anyExecutor { sender, args ->
+            val name: String? = getName(args)
+            sender.sendMessage(if (name != null) "Hello, $name!" else "Hello, world!")
+        }
+    }
+}
+```
+
+---
+
+## Practical Examples
+
+### Example 1: Custom argument wrapping an enum
+
+When using `multiLiteralArgument` to represent a set of enum values, wrapping it in a
+`CustomArgument` is cleaner than scattering `valueOf` calls throughout executors.
+
+```kotlin
+import dev.jorel.commandapi.arguments.CustomArgument
+import dev.jorel.commandapi.arguments.CustomArgument.CustomArgumentException
+import dev.jorel.commandapi.arguments.MultiLiteralArgument
+
+enum class SpeedMode { WALK, FLY, SWIM }
+
+fun speedModeArgument(nodeName: String) =
+    CustomArgument(
+        MultiLiteralArgument(nodeName, *SpeedMode.entries.map { it.name.lowercase() }.toTypedArray())
+    ) { info ->
+        SpeedMode.entries.firstOrNull { it.name.equals(info.input(), ignoreCase = true) }
+            ?: throw CustomArgumentException.fromString("Unknown mode: ${info.input()}")
+    }
+
+commandTree("speed") {
+    argument(speedModeArgument("mode")) { getMode ->
+        floatArgument("value", min = 0.0f, max = 1.0f) { getValue ->
+            playerExecutor { sender, args ->
+                val mode: SpeedMode = getMode(args)
+                val value = getValue(args)
+                when (mode) {
+                    SpeedMode.WALK -> sender.walkSpeed = value
+                    SpeedMode.FLY  -> sender.flySpeed  = value
+                    SpeedMode.SWIM -> { /* handle swim speed */ }
+                }
+                sender.sendMessage("Set ${mode.name.lowercase()} speed to $value")
+            }
+        }
+    }
+}
+```
+
+### Example 2: Entity selector and item giving
+
+```kotlin
+commandTree("give") {
+    entitySelectorArgumentOnePlayer("target") { getTarget ->
+        itemStackArgument("item") { getItem ->
+            integerArgument("amount", min = 1, max = 64) { getAmount ->
+                playerExecutor { sender, args ->
+                    val target = getTarget(args)
+                    val item   = getItem(args).clone().also { it.amount = getAmount(args) }
+                    target.inventory.addItem(item)
+                    sender.sendMessage("Gave ${item.amount}x ${item.type} to ${target.name}")
+                }
+            }
+        }
+    }
+}
+```
+
+### Example 3: Resulting executor returning a count
+
+```kotlin
+commandTree("count") {
+    entitySelectorArgumentManyEntities("targets") { getTargets ->
+        anyResultingExecutor { sender, args ->
+            val targets = getTargets(args)
+            sender.sendMessage("Found ${targets.size} entities")
+            targets.size  // returned as command result
+        }
+    }
+}
+```
+
+### Example 4: Namespaced command
+
+```kotlin
+override fun onLoad() {
+    CommandAPI.onLoad(CommandAPIPaperConfig(this))
+
+    // accessible as both /hello and /myplugin:hello
+    commandTree("hello", this) {
+        anyExecutor { sender, args ->
+            sender.sendMessage("Hello!")
+        }
+    }
+}
+```
+
+### Example 5: Velocity proxy command
+
+```kotlin
+fun registerCommands() {
+    commandTree("proxy") {
+        literalArgument("info") {
+            anyExecutor { sender, args ->
+                sender.sendMessage(Component.text("Running on Velocity"))
+            }
+        }
+        literalArgument("players") {
+            consoleExecutor { sender, args ->
+                sender.sendMessage(Component.text("Console-only subcommand"))
+            }
+        }
+    }
+}
+```
+
+---
+
+## Velocity Argument Reference
+
+Velocity does not have Minecraft server objects (entities, items, etc.), so the argument set is limited.
+
+| Function | Return type |
+|---|---|
+| `integerArgument` | `Int` |
+| `floatArgument` | `Float` |
+| `doubleArgument` | `Double` |
+| `longArgument` | `Long` |
+| `booleanArgument` | `Boolean` |
+| `stringArgument` | `String` |
+| `textArgument` | `String` |
+| `greedyStringArgument` | `String` |
+| `literalArgument` | `String` |
+| `multiLiteralArgument` | `String` |
+
+Each has a corresponding `xxxOptionalArgument` variant returning a nullable type.
+
+---
+
+## Bukkit / Paper / Spigot Argument Reference
+
+All functions have a corresponding `xxxOptionalArgument` variant returning `T?`.
+
+| Function | Return type | Notable parameters |
+|---|---|---|
+| `integerArgument` | `Int` | `nodeName, min, max` |
+| `integerRangeArgument` | `IntegerRange` | `nodeName` |
+| `floatArgument` | `Float` | `nodeName, min, max` |
+| `doubleArgument` | `Double` | `nodeName, min, max` |
+| `doubleRangeArgument` | `DoubleRange` | `nodeName` |
+| `longArgument` | `Long` | `nodeName, min, max` |
+| `booleanArgument` | `Boolean` | `nodeName` |
+| `stringArgument` | `String` | `nodeName` |
+| `textArgument` | `String` | `nodeName` |
+| `greedyStringArgument` | `String` | `nodeName` |
+| `literalArgument` | `String` | `nodeName, literal=nodeName` |
+| `multiLiteralArgument` | `String` | `nodeName, vararg literals` |
+| `locationArgument` | `Location` | `nodeName, locationType, centerPosition` |
+| `location2DArgument` | `Location2D` | `nodeName, locationType, centerPosition` |
+| `rotationArgument` | `Rotation` | `nodeName` |
+| `axisArgument` | `EnumSet<Axis>` | `nodeName` |
+| `entitySelectorArgumentOneEntity` | `Entity` | `nodeName` |
+| `entitySelectorArgumentManyEntities` | `Collection<Entity>` | `nodeName, allowEmpty` |
+| `entitySelectorArgumentOnePlayer` | `Player` | `nodeName` |
+| `entitySelectorArgumentManyPlayers` | `Collection<Player>` | `nodeName, allowEmpty` |
+| `entityTypeArgument` | `EntityType` | `nodeName` |
+| `scoreHolderArgumentSingle` | `String` | `nodeName` |
+| `scoreHolderArgumentMultiple` | `Collection<String>` | `nodeName` |
+| `scoreboardSlotArgument` | `ScoreboardSlot` | `nodeName` |
+| `objectiveArgument` | `Objective` | `nodeName` |
+| `objectiveCriteriaArgument` | `String` | `nodeName` |
+| `teamArgument` | `Team` | `nodeName` |
+| `angleArgument` | `Float` | `nodeName` |
+| `advancementArgument` | `Advancement` | `nodeName` |
+| `biomeArgument` | `Biome` | `nodeName` |
+| `biomeNamespacedKeyArgument` | `NamespacedKey` | `nodeName` |
+| `blockStateArgument` | `BlockState` | `nodeName` |
+| `commandArgument` | `CommandResult` | `nodeName` |
+| `enchantmentArgument` | `Enchantment` | `nodeName` |
+| `itemStackArgument` | `ItemStack` | `nodeName` |
+| `lootTableArgument` | `LootTable` | `nodeName` |
+| `mathOperationArgument` | `MathOperation` | `nodeName` |
+| `namespacedKeyArgument` | `NamespacedKey` | `nodeName` |
+| `particleArgument` | `ParticleData<*>` | `nodeName` |
+| `potionEffectArgument` | `PotionEffectType` | `nodeName` |
+| `potionEffectNamespacedKeyArgument` | `NamespacedKey` | `nodeName` |
+| `soundArgument` | `Sound` | `nodeName` |
+| `soundNamespacedKeyArgument` | `NamespacedKey` | `nodeName` |
+| `timeArgument` | `Int` | `nodeName` |
+| `uuidArgument` | `UUID` | `nodeName` |
+| `worldArgument` | `World` | `nodeName` |
+| `blockPredicateArgument` | `Predicate<Block>` | `nodeName` |
+| `itemStackPredicateArgument` | `Predicate<ItemStack>` | `nodeName` |
+| `nbtCompoundArgument<T>` | `T` | `nodeName` |
+| `functionArgument` | `Array<FunctionWrapper>` | `nodeName` |
+
+**Spigot only**:
+
+| Function | Return type |
+|---|---|
+| `chatColorArgument` | `ChatColor` |
+| `chatComponentArgument` | `Array<BaseComponent>` |
+| `chatArgument` | `Array<BaseComponent>` |
+| `playerProfileArgument` | `List<PlayerProfile>` |
+| `asyncPlayerProfileArgument` | `CompletableFuture<List<PlayerProfile>>` |
+| `recipeArgument` | `Recipe` |
+
+---
+
+## Internal Implementation Notes
+
+These notes are provided so AI code generators understand the design and can extend or replicate patterns correctly.
+
+### How `argument` / `optionalArgument` work
+
+```kotlin
+// Generic implementation on CommandTree
+inline fun <reified T, reified U : T> CommandTree.argument(
+    base: Argument<T>,
+    crossinline block: Argument<*>.((CommandArguments) -> U) -> Unit = {},
+): CommandTree =
+    then(
+        base.apply {
+            this.block { args ->
+                args.get(base.nodeName) as U  // cast is encapsulated here
+            }
+        },
+    )
+
+// Each specific argument type is a thin wrapper
+inline fun CommandTree.integerArgument(
+    nodeName: String,
+    min: Int = Int.MIN_VALUE,
+    max: Int = Int.MAX_VALUE,
+    crossinline block: Argument<*>.((CommandArguments) -> Int) -> Unit = {},
+) = argument(IntegerArgument(nodeName, min, max), block)
+```
+
+The `block` parameter type `Argument<*>.((CommandArguments) -> U) -> Unit` is a lambda with
+`Argument<*>` as receiver and a getter `(CommandArguments) -> U` as its first argument.
+The getter is constructed once and closed over by the executor lambda.
+
+### How executors work
+
+```kotlin
+inline fun BukkitExecutable<*>.anyExecutor(
+    crossinline executor: (CommandSender, CommandArguments) -> Unit,
+): BukkitExecutable<*> =
+    executes(CommandExecutor { sender, args -> executor(sender, args) })
+```
+
+All executor functions use `inline` + `crossinline`, so no lambda object is allocated at runtime.
+
+---
+
+## Patterns and Anti-Patterns
+
+### Correct — use the getter
+
+```kotlin
+integerArgument("count") { getCount ->
+    anyExecutor { sender, args ->
+        val count = getCount(args)  // type-safe
+    }
+}
+```
+
+### Avoid — manual cast (official DSL style, unnecessary here)
+
+```kotlin
+integerArgument("count") { _ ->
+    anyExecutor { sender, args ->
+        val count = args.get("count") as Int  // works but defeats the purpose
+    }
+}
+```
+
+### Avoid — calling the getter outside an executor
+
+```kotlin
+integerArgument("count") { getCount ->
+    // val count = getCount(???)  // no args available here
+    anyExecutor { sender, args ->
+        val count = getCount(args)  // correct: call inside the executor
+    }
+}
+```
+
+---
+
+## Version Reference
+
+| Component | Version |
+|---|---|
+| commandapi-kotlin-improved | 1.3.0 |
+| CommandAPI | 11.1.0 |
+| Kotlin | 2.3.0 |
+| Paper API | 1.20.4-R0.1-SNAPSHOT |
+| Velocity API | 3.4.0-SNAPSHOT |
+| Java | 17 |
