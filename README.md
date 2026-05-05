@@ -39,7 +39,7 @@ repositories {
 
 dependencies {
     implementation("dev.jorel:commandapi-{platform}-core:11.1.0")
-    implementation("dev.s7a:commandapi-{platform}-kotlin-improved:1.3.0")
+    implementation("dev.s7a:commandapi-{platform}-kotlin-improved:1.3.1")
 }
 ```
 
