@@ -43,6 +43,57 @@ dependencies {
 }
 ```
 
+## AI Agent Skill
+
+This repository includes an installable agent skill at `skills/commandapi-kotlin-improved`.
+
+Use it when you want Codex or another supported coding agent to:
+
+- write commands with `dev.s7a.commandapi`
+- migrate from `dev.jorel.commandapi.kotlindsl`
+- replace unsafe `args.get(...) as T` casts with typed getter lambdas
+- choose the correct `bukkit` / `spigot` / `paper` / `velocity` artifact
+
+### Install with GitHub CLI
+
+`gh skill` is in public preview. For Codex, install the skill with:
+
+```sh
+gh skill install sya-ri/commandapi-kotlin-improved commandapi-kotlin-improved --agent codex
+```
+
+To preview the skill before installing:
+
+```sh
+gh skill preview sya-ri/commandapi-kotlin-improved commandapi-kotlin-improved
+```
+
+### Install with npx
+
+Install the specific skill for Codex:
+
+```sh
+npx skills add sya-ri/commandapi-kotlin-improved --skill commandapi-kotlin-improved --agent codex --yes
+```
+
+List installable skills in this repository:
+
+```sh
+npx skills add sya-ri/commandapi-kotlin-improved --list
+```
+
+### Skill Layout
+
+The installable skill lives here:
+
+```text
+skills/
+└── commandapi-kotlin-improved/
+    ├── SKILL.md
+    ├── agents/openai.yaml
+    └── references/
+```
+
 ## Examples
 
 ### Official `dev.jorel:commandapi-bukkit-kotlin`

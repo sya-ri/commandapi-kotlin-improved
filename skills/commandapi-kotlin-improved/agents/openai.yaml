@@ -1,0 +1,4 @@
+interface:
+  display_name: "CommandAPI Kotlin Improved"
+  short_description: "Build and migrate Minecraft commands with the improved type-safe CommandAPI Kotlin DSL"
+  default_prompt: "Use this skill when working with dev.s7a commandapi-kotlin-improved for Bukkit, Spigot, Paper, or Velocity command code."
