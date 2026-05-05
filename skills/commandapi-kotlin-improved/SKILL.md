@@ -64,3 +64,4 @@ If the project already depends on CommandAPI, preserve its version line unless t
 
 - For install coordinates, platform mapping, and common command patterns, read [references/usage.md](references/usage.md).
 - For side-by-side migration guidance from the official Kotlin DSL, read [references/migration.md](references/migration.md).
+- For available argument builders and executor helpers by platform, read [references/api-surface.md](references/api-surface.md).
