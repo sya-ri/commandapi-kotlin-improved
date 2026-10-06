@@ -8,3 +8,7 @@ include(
     ":examples:original",
     ":examples:improved",
 )
+
+includeBuild("quality/detekt-rules") {
+    name = "commandapi-detekt-rules"
+}

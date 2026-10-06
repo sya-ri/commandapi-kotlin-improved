@@ -1,0 +1,18 @@
+[versions]
+kotlin = "2.4.20"
+detekt = "2.0.0-alpha.6"
+kotlinter = "5.7.0"
+kotest = "6.2.5"
+junit-platform = "1.13.4"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
+
+[libraries]
+detekt-api = { module = "dev.detekt:detekt-api", version.ref = "detekt" }
+detekt-core = { module = "dev.detekt:detekt-core", version.ref = "detekt" }
+detekt-test-utils = { module = "dev.detekt:detekt-test-utils", version.ref = "detekt" }
+kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }

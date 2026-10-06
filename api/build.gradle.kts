@@ -13,7 +13,7 @@ subprojects {
         apply(plugin = "org.jetbrains.dokka-javadoc")
         apply(plugin = "com.vanniktech.maven.publish")
 
-        version = "1.3.1"
+        version = libs.versions.commandapi.improved.get()
 
         mavenPublishing {
             publishToMavenCentral()

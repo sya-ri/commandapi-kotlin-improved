@@ -50,3 +50,8 @@ subprojects {
         }
     }
 }
+
+tasks.named("check") {
+    dependsOn(gradle.includedBuild("commandapi-detekt-rules").task(":check"))
+    dependsOn(gradle.includedBuild("commandapi-detekt-rules").task(":verifyBundledJar"))
+}

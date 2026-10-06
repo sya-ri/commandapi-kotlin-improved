@@ -1,0 +1,9 @@
+[tools]
+java = "25"
+
+[settings]
+activate_aggressive = true
+
+[tasks."commandapi:update-jar"]
+run = "./gradlew --no-daemon -p quality/detekt-rules updateBundledJar"
+run_windows = "./gradlew.bat --no-daemon -p quality/detekt-rules updateBundledJar"

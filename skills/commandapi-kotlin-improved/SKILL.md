@@ -2,6 +2,10 @@
 name: commandapi-kotlin-improved
 description: Use when working on Minecraft plugin commands built with commandapi-kotlin-improved, including adding new commands, migrating from the official CommandAPI Kotlin DSL, selecting the correct platform artifact, and replacing unsafe args.get(...) casts with type-safe getter lambdas.
 license: MIT
+metadata:
+  detekt-major: "2"
+  detekt-tested: "2.0.0-alpha.6"
+  rules-version: "1.0.0"
 ---
 
 # CommandAPI Kotlin Improved
@@ -65,3 +69,6 @@ If the project already depends on CommandAPI, preserve its version line unless t
 - For install coordinates, platform mapping, and common command patterns, read [references/usage.md](references/usage.md).
 - For side-by-side migration guidance from the official Kotlin DSL, read [references/migration.md](references/migration.md).
 - For available argument builders and executor helpers by platform, read [references/api-surface.md](references/api-surface.md).
+
+- For project-owned root/child command classes, DI registration and parent attachment, read [references/class-commands.md](references/class-commands.md). These wrappers are an application pattern, not a published library API.
+- For literal/argument completion boundaries and the independently bundled detekt v2 JAR, read [references/detekt.md](references/detekt.md).
